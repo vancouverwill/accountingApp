@@ -31,4 +31,6 @@ func Test_Index(t *testing.T) {
 	handler(w, req)
 
 	t.Log("%d - %s", w.Code, w.Body.String())
+
+	t.Log(req)
 }
