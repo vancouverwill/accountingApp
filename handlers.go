@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/vancouverwill/accountingApp/models"
 	"io"
 	"io/ioutil"
 	"log"
@@ -22,7 +23,7 @@ func TodoIndex(w http.ResponseWriter, r *http.Request) {
 	//		Todo{Name: "Host meetup"},
 	//	}
 
-	todos := RepoGetTodos()
+	todos := models.RepoGetTodos()
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -42,7 +43,7 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
 		fmt.Print(err)
 	}
 
-	todo := RepoFindTodo(todoIdString)
+	todo := models.RepoFindTodo(todoIdString)
 	//	fmt.Fprintln(w, "Todo show:", todoId)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -55,7 +56,7 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
 
 func TodoCreate(w http.ResponseWriter, r *http.Request) {
 	log.Println("TodoCreate")
-	var todo Todo
+	var todo models.Todo
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -71,7 +72,7 @@ func TodoCreate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	log.Println(todo)
-	t := RepoCreateTodo(todo)
+	t := models.RepoCreateTodo(todo)
 	//	t := todo
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

@@ -1,0 +1,16 @@
+package models
+
+/**
+*
+* return json exp [{"name" : "xxxx", "exchangeRate" : 2.00},....]
+*
+**/
+// listCurrencies() 
+
+
+// createCurrency(name String, exchangeRate float) 
+
+
+// updateCurrencyExchangeRate(currencyID int, exchangeRate float)
+
+// deleteCurrency()

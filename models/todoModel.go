@@ -1,11 +1,21 @@
-package main
+package models
 
 import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"time"
 )
+
+type Todo struct {
+	Id        int       `json:"id"`
+	Name      string    `json:"name"`
+	Completed bool      `json:"completed"`
+	Due       time.Time `json:"due"`
+}
+
+type Todos []Todo
 
 var currentId int
 
