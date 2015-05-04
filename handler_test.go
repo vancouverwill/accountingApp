@@ -45,20 +45,6 @@ func TestTodoIndex(t *testing.T) {
 	t.Log("status:", w.Code, "body:", w.Body.String())
 }
 
-//func setup() {
-//    //mux router with added question routes
-//    m = mux.NewRouter()
-//    AddQuestionRoutes(m)
-
-//    //The response recorder used to record HTTP responses
-//    respRec = httptest.NewRecorder()
-//}
-
-//var respRec *httptest.ResponseRecorder
-//var req *http.Request
-//var err error
-//var m *mux.Router
-
 //func TestGet400(t *testing.T) {
 //	//    setup()
 //	respRec = httptest.NewRecorder()

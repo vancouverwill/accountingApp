@@ -12,11 +12,11 @@ import (
 	"strconv"
 )
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome!")
+func Index(response http.ResponseWriter, request *http.Request) {
+	fmt.Fprintln(response, "Welcome!")
 }
 
-func TodoIndex(w http.ResponseWriter, r *http.Request) {
+func TodoIndex(response http.ResponseWriter, request *http.Request) {
 	log.Println("TodoIndex")
 	//	todos := Todos{
 	//		Todo{Name: "Write presentation"},
@@ -25,17 +25,17 @@ func TodoIndex(w http.ResponseWriter, r *http.Request) {
 
 	todos := models.RepoGetTodos()
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	response.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(todos); err != nil {
+	if err := json.NewEncoder(response).Encode(todos); err != nil {
 		panic(err)
 	}
 }
 
-func TodoShow(w http.ResponseWriter, r *http.Request) {
+func TodoShow(response http.ResponseWriter, request *http.Request) {
 	log.Println("TodoShow")
-	vars := mux.Vars(r)
+	vars := mux.Vars(request)
 	todoId := vars["todoId"]
 
 	todoIdString, err := strconv.Atoi(todoId)
@@ -46,37 +46,37 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
 	todo := models.RepoFindTodo(todoIdString)
 	//	fmt.Fprintln(w, "Todo show:", todoId)
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	response.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(todo); err != nil {
+	if err := json.NewEncoder(response).Encode(todo); err != nil {
 		panic(err)
 	}
 }
 
-func TodoCreate(w http.ResponseWriter, r *http.Request) {
+func TodoCreate(response http.ResponseWriter, request *http.Request) {
 	log.Println("TodoCreate")
 	var todo models.Todo
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	body, err := ioutil.ReadAll(io.LimitReader(request.Body, 1048576))
 	if err != nil {
 		panic(err)
 	}
-	if err := r.Body.Close(); err != nil {
+	if err := request.Body.Close(); err != nil {
 		panic(err)
 	}
 	if err := json.Unmarshal(body, &todo); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
+		response.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		response.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(response).Encode(err); err != nil {
 			panic(err)
 		}
 	}
 	log.Println(todo)
 	t := models.RepoCreateTodo(todo)
 	//	t := todo
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
+	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	response.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(response).Encode(t); err != nil {
 		panic(err)
 	}
 }

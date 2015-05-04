@@ -8,7 +8,30 @@ type AccountHolder struct {
 	Created  int    `json:"created"`
 }
 
+/**
+*
+* todo
+*
+**/
 //addAccount
+
+/**
+*
+* todo
+*
+**/
 //removeAccount
+
+/**
+*
+* todo
+*
+**/
 //listAccounts
+
+/**
+*
+* todo
+*
+**/
 //getAccountHolderDetails

@@ -12,6 +12,23 @@ type Account struct {
 	Created         int    `json:"created"`
 }
 
+/**
+*
+* todo
+*
+**/
 // createAccount(name String, address String)
+
+/**
+*
+* todo
+*
+**/
 // deleteAccount(accountId int)
+
+/**
+*
+* todo
+*
+**/
 // updateAccount()

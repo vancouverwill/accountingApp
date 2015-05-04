@@ -29,11 +29,12 @@ var dbName string = "transactions"
 var MyTransaction = TransactionModel{}
 
 //create_transaction(account_id int, payment_or_product string, amount float)
-func (tm TransactionModel) RepoCreateTransaction(t Transaction) Transaction {
+func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 	log.Println("RepoCreateTransaction")
 	log.Println(t)
 
 	db, e := myDb.setup()
+	defer db.Close()
 
 	if e != nil {
 		fmt.Print(e)
@@ -70,6 +71,7 @@ func (tm TransactionModel) RepoCreateTransaction(t Transaction) Transaction {
 //func getTransactions(start_date ???, end_date ???, AccountAccountHolderOrCompany, relatedId Int null) Transactions
 func GetTransactions() Transactions {
 	db, e := myDb.setup()
+	defer db.Close()
 
 	if e != nil {
 		fmt.Print(e)
@@ -84,9 +86,6 @@ func GetTransactions() Transactions {
 
 	var results Transactions
 
-	if err != nil {
-		fmt.Print(err)
-	}
 	i := 0
 	for rows.Next() {
 
