@@ -13,7 +13,7 @@ import (
 
 // getTransaction(transactionId)
 
-// getTransactions(start_date,end_date, AccountAccountHolderOrCompany string, accountholder = null, accountId = null)
+// getTransactions(start_date,end_date, AccountAccountHolderOrCompany string, relatedId = null)
 
 func TransactionsIndex(w http.ResponseWriter, r *http.Request) {
 	log.Println("TransactionsIndex")
@@ -29,7 +29,7 @@ func TransactionsIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func TransactionsTodoCreate(w http.ResponseWriter, r *http.Request) {
-	log.Println("TodoCreate")
+	log.Println("TransactionCreate")
 	var transaction models.Transaction
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {

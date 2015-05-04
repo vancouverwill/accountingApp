@@ -22,6 +22,18 @@ var routes = Routes{
 		controllers.Index,
 	},
 	Route{
+		"BalancesIndex",
+		"GET",
+		"/balances",
+		controllers.BalancesIndex,
+	},
+	Route{
+		"TodoIndex",
+		"GET",
+		"/todos",
+		controllers.TodoIndex,
+	},
+	Route{
 		"TodoIndex",
 		"GET",
 		"/todos",

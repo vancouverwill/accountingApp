@@ -31,12 +31,36 @@ var MyTransaction = TransactionModel{}
 //create_transaction(account_id int, payment_or_product string, amount float)
 func (tm TransactionModel) RepoCreateTransaction(t Transaction) Transaction {
 	log.Println("RepoCreateTransaction")
-	//	log.Println(Transaction.Details)
-	//	currentId += 1
-	//	t.Id = currentId
-	//	todos = append(todos, t)
-	return t
+	log.Println(t)
 
+	db, e := myDb.setup()
+
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, paymentOrProduct, amount, date, updated, created) values (?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	if err != nil {
+		fmt.Print(err)
+	}
+	res, err := stmt.Exec(t.AccountId, t.Details, t.PaymentOrProduct, t.Amount, t.Date)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	RowsAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("RowsAffected", RowsAffected)
+	t.Id = int(lastId)
+	log.Println("transaction entered")
+	log.Println(t)
+	return t
 }
 
 /**
@@ -45,13 +69,12 @@ func (tm TransactionModel) RepoCreateTransaction(t Transaction) Transaction {
 **/
 //func getTransactions(start_date ???, end_date ???, AccountAccountHolderOrCompany, relatedId Int null) Transactions
 func GetTransactions() Transactions {
-	//	db, e := sql.Open("mysql", "root:@tcp(localhost:3306)/accountancyApp")
-	//	myDb := dbModels{}
 	db, e := myDb.setup()
 
 	if e != nil {
 		fmt.Print(e)
 	}
+
 	rows, err := db.Query("select id, accountId, details, paymentOrProduct, amount, date from " + dbName)
 	if err != nil {
 		fmt.Print(err)
