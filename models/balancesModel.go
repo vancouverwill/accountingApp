@@ -1,35 +1,44 @@
 package models
 
 import (
-	//	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 )
 
-func GetBalanceForAccountId(relatedToIdInt int) (float32, float32) {
-	log.Println("getBalanceForAccountId", relatedToIdInt)
+/**
+* get current balances for a single account
+**/
+func GetBalanceForAccountId(accountId int) (float32, float32, float32) {
+	log.Println("getBalanceForAccountId", accountId)
 	db, e := myDb.setup()
 	defer db.Close()
 	if e != nil {
 		fmt.Print(e)
 	}
 	var paymentBalance float32
+	var paymentBalanceAfterTax float32
 	var productBalance float32
-	selectStatement := "select (select IFNULL(sum(amount), 0.00) AS \"account_amount\" from `transactions` where accountId =  ? AND  paymentOrProduct = \"payment\") AS \"paymentBalance\", (select IFNULL(sum(amount), 0.00) AS \"account_amount\" from `transactions` where accountId =  ? AND  paymentOrProduct = \"product\") AS \"productBalance\""
-	err := db.QueryRow(selectStatement, relatedToIdInt, relatedToIdInt).Scan(&paymentBalance, &productBalance)
+	selectStatement := "SELECT (select IFNULL(sum(amount), 0.00) AS \"paymentBalance\" "
+	selectStatement += "FROM `transactions` AS t "
+	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
+	selectStatement += "WHERE t.accountId =  ? AND  paymentOrProduct = \"payment\"), "
+	selectStatement += "(SELECT IFNULL(sum(amount - (amount * tr.taxRate)), 0.00) AS \"paymentBalanceAfterTax\" "
+	selectStatement += "FROM `transactions` AS t "
+	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
+	selectStatement += "WHERE t.accountId =  ? AND  paymentOrProduct = \"payment\"), "
+	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"accountAmount\" "
+	selectStatement += "FROM `transactions` AS t "
+	selectStatement += "WHERE accountId =  ? AND  paymentOrProduct = \"product\") AS \"productBalance\""
+
+	err := db.QueryRow(selectStatement, accountId, accountId, accountId).Scan(&paymentBalance, &paymentBalanceAfterTax, &productBalance)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	log.Println("paymentBalance", paymentBalance)
-	log.Println("productBalance", productBalance)
+	log.Println("getBalanceForAccountId", "finished")
 
-	//	select (select sum(amount) AS "account_amount" from `transactions` where accountId =  9
-	//AND  paymentOrProduct = "payment") AS "paymentBalance",
-
-	//(select sum(amount) AS "account_amount" from `transactions` where accountId =  9
-	//AND  paymentOrProduct = "product") AS "productBalance";
-
-	return paymentBalance, productBalance
+	return paymentBalance, paymentBalanceAfterTax, productBalance
 }

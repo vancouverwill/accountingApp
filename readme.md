@@ -5,7 +5,7 @@
 - For each financial year exchange rates in our system are fixed
 - An account can only exist in one country
 - An accountholder manages the accounts for one country
-- Sale and handover are independent
+- Sale and handover are independent i.e. a payment being received and products being sent out can happen on different days
 - the base currency is US Dollar
 
 
@@ -18,21 +18,9 @@ Once mysql is setup locally run `schemaSetup.sql` to create the db and tables.
 Final step is run `go install` and `go build` from the root of your application, then if all goes fine you visist the site at `http://localhost:8080`
 
 
-
-sample POST query
-
-`curl -H "Content-Type: application/json" -d '{"name":"New Todo 123"}' http://localhost:8080/todos`
-
-`curl -H "Content-Type: application/json" -d '{"accountId":9,"details":"buying lots of products AGAIN","paymentOrProduct":"product","amount":201,"date":"2015-01-19T00:00:00Z","updated":0,"created":0}' http://localhost:8080/transactions`
+For exmample usage please see curl commands in controller function headers
 
 
-sample GET query
 
-curl -H "Content-Type: application/json" -g http://localhost:8080/todos
-
-
-sample GET by id
-
-`curl -H "Content-Type: application/json" -g http://localhost:8080/todos/12`
 
 

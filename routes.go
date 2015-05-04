@@ -28,45 +28,21 @@ var routes = Routes{
 		controllers.BalancesIndex,
 	},
 	Route{
-		"TodoIndex",
-		"GET",
-		"/todos",
-		controllers.TodoIndex,
-	},
-	Route{
-		"TodoIndex",
-		"GET",
-		"/todos",
-		controllers.TodoIndex,
-	},
-	Route{
-		"TodoShow",
-		"GET",
-		"/todos/{todoId}",
-		controllers.TodoShow,
-	},
-	Route{
-		"TodoCreate",
-		"POST",
-		"/todos",
-		controllers.TodoCreate,
-	},
-	Route{
 		"TransactionsIndex",
 		"GET",
 		"/transactions",
 		controllers.TransactionsIndex,
 	},
 	Route{
-		"TransactionsTodoCreate",
+		"Transaction",
+		"GET",
+		"/transactions/{transactionId}",
+		controllers.Transaction,
+	},
+	Route{
+		"TransactionsCreate",
 		"POST",
 		"/transactions",
-		controllers.TransactionsTodoCreate,
+		controllers.TransactionsCreate,
 	},
-	//	Route{
-	//		"404Page",
-	//		"GET",
-	//		"/*",
-	//		controllers.FourZeroFourPage,
-	//	},
 }

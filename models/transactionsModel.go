@@ -13,7 +13,7 @@ type Transaction struct {
 	AccountId        int       `json:"accountId"`
 	Details          string    `json:"details"`
 	PaymentOrProduct string    `json:"paymentOrProduct"`
-	Amount           float32   `json:"amount"`
+	Amount           float32   `json:"amount"` // saved as US dollars
 	Date             time.Time `json:"date"`
 	Updated          int       `json:"updated"`
 	Created          int       `json:"created"`
@@ -28,7 +28,11 @@ var dbName string = "transactions"
 
 var MyTransaction = TransactionModel{}
 
-//create_transaction(account_id int, payment_or_product string, amount float)
+/**
+*
+* amount is recorded as US dollars
+*
+**/
 func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 	log.Println("RepoCreateTransaction")
 	log.Println(t)
@@ -40,11 +44,17 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 		fmt.Print(e)
 	}
 
+	currency := getCurrencyByAccountId(t.AccountId)
+
+	log.Println("currency", currency)
+
+	amountInUS := t.Amount * currency.ExchangeRate
+
 	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, paymentOrProduct, amount, date, updated, created) values (?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
 	if err != nil {
 		fmt.Print(err)
 	}
-	res, err := stmt.Exec(t.AccountId, t.Details, t.PaymentOrProduct, t.Amount, t.Date)
+	res, err := stmt.Exec(t.AccountId, t.Details, t.PaymentOrProduct, amountInUS, t.Date)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,8 +92,6 @@ func GetTransactions() Transactions {
 		fmt.Print(err)
 	}
 
-	//	var results = make([]Todo, 1000)
-
 	var results Transactions
 
 	i := 0
@@ -98,9 +106,6 @@ func GetTransactions() Transactions {
 			date             string
 		)
 		var err = rows.Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
-		log.Print(rows.Columns())
-		log.Print(id)
-		log.Print(details)
 
 		layout := "2006-01-02"
 
@@ -108,23 +113,38 @@ func GetTransactions() Transactions {
 		if err != nil {
 			fmt.Println(err)
 		}
-		//		todo := &Todo{Id: id, Name: name, Completed: completed}
 		transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: dateString}
-		//		b, err := json.Marshal(todo)
-		//		if err != nil {
-		//			fmt.Println(err)
-		//			return
-		//		}
-		//		results[i] = fmt.Sprintf("%s", string(b))
-		//		results[i] := todo
 		results = append(results, transaction)
 		i++
 	}
-	//	result = result[:i]
-
 	log.Println(results)
 
 	return results
+}
+
+func GetTransaction(transactionId int) Transaction {
+	db, e := myDb.setup()
+	defer db.Close()
+	if e != nil {
+		fmt.Print(e)
+	}
+	var (
+		id               int
+		accountId        int
+		details          string
+		paymentOrProduct string
+		amount           float32
+		date             time.Time
+	)
+	err := db.QueryRow("SELECT id, accountId, details, paymentOrProduct, amount, date FROM "+dbName+" WHERE id = ?", transactionId).Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: date}
+
+	log.Println(transaction)
+	return transaction
 }
 
 //deleteTransaction(transaction_id int)

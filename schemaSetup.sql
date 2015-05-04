@@ -39,22 +39,42 @@ INSERT into currencies (name, exchangeRate, updated, created) VALUES ("UK POUND 
 INSERT into currencies (name, exchangeRate, updated, created) VALUES ("Euro", 1.12, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 
+CREATE TABLE `taxRates` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  `taxRate` float DEFAULT '1',
+  `updated` int(11) DEFAULT NULL,
+  `created` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT into taxRates (name, taxRate, updated, created) VALUES ("US Tax", 0.15, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into taxRates (name, taxRate, updated, created) VALUES ("Canadian Tax", 0.3, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into taxRates (name, taxRate, updated, created) VALUES ("Norwegian Tax", 0.6, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
+
 -- create accounts table and seed data
 CREATE TABLE `accounts` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `accountHolderId` int(11) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `address` varchar(400) DEFAULT NULL,
-  `currentCredit` int(11) DEFAULT '0',
-  `currentDebit` int(11) DEFAULT '0',
-  `currencyId` int(11) DEFAULT NULL,
+  `currencyId` int(11) DEFAULT 0,
+  `taxRateId` int(11) DEFAULT 0,
   `updated` int(11) DEFAULT NULL,
   `created` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
-INSERT into accounts (accountHolderId, name, address, currencyId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Jim Davies") , "Miami Parts", "20 Main Street", (SELECT id AS currencyId from currencies WHERE `name` = "US DOLLAR"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
-INSERT into accounts (accountHolderId, name, address, currencyId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Jim Davies") , "Atlanta WholeSale", "200 Centre Avenue", (SELECT id AS currencyId from currencies WHERE `name` = "US DOLLAR"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into accounts (accountHolderId, name, address, currencyId, taxRateId,updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Jim Davies") , "Miami Parts", "20 Main Street", (SELECT id AS currencyId from currencies WHERE `name` = "US DOLLAR"), (SELECT id AS taxRateId from taxRates WHERE `name` = "US Tax"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into accounts (accountHolderId, name, address, currencyId, taxRateId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Jim Davies") , "Philad WholeSale", "200 Centre Avenue", (SELECT id AS currencyId from currencies WHERE `name` = "US DOLLAR"), (SELECT id AS taxRateId from taxRates WHERE `name` = "US Tax"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into accounts (accountHolderId, name, address, currencyId, taxRateId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Jim Davies") , "Philadelphia All stars", "200 Centre Avenue", (SELECT id AS currencyId from currencies WHERE `name` = "US DOLLAR"), (SELECT id AS taxRateId from taxRates WHERE `name` = "US Tax"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into accounts (accountHolderId, name, address, currencyId, taxRateId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Michael Rupert") , "Kelowna  Brother", "200 Centre Avenue", (SELECT id AS currencyId from currencies WHERE `name` = "Canadian DOLLAR"), (SELECT id AS taxRateId from taxRates WHERE `name` = "Canadian Tax"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into accounts (accountHolderId, name, address, currencyId, taxRateId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Michael Rupert") , "Surrey  Buy Buy Buy", "200 Centre Avenue", (SELECT id AS currencyId from currencies WHERE `name` = "Canadian DOLLAR"), (SELECT id AS taxRateId from taxRates WHERE `name` = "Canadian Tax"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+INSERT into accounts (accountHolderId, name, address, currencyId, taxRateId, updated, created) VALUES ( (SELECT id AS accountHolderId from accountHolders WHERE `name` = "Michael Rupert") , "Victoria  Shop Shop", "200 Centre Avenue", (SELECT id AS currencyId from currencies WHERE `name` = "Canadian DOLLAR"), (SELECT id AS taxRateId from taxRates WHERE `name` = "Canadian Tax"), UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
 
 -- create transactions table and seed data
 CREATE TABLE `transactions` (
