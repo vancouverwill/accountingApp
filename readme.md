@@ -15,7 +15,17 @@ If you don't have mysql installed go ahead, on mac just do `brew install mysql` 
 
 Once mysql is setup locally run `schemaSetup.sql` to create the db and tables.
 
-Final step is run `go install` and `go build` from the root of your application, then if all goes fine you visist the site at `http://localhost:8080`
+Possibly depending on go setup you may need to run
+
+```
+go get github.com/gorilla/mux
+go get github.com/go-sql-driver/mysql
+```
+
+Final step is run `go get`, `go install` and `go build` from the root of your application, then if all goes fine you visist the site at `http://localhost:8080`
+
+
+
 
 
 For exmample usage please see curl commands in controller function headers
