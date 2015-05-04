@@ -3,11 +3,8 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	//	"github.com/gorilla/mux"
-	//	"github.com/vancouverwill/accountingApp/models"
 	"log"
 	"net/http"
-	//	"strconv"
 )
 
 func Index(response http.ResponseWriter, request *http.Request) {
