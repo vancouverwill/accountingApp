@@ -2,11 +2,13 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/vancouverwill/accountingApp/controllers"
 	"net/http"
 )
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
+	router.NotFoundHandler = http.HandlerFunc(controllers.FourZeroFourPage)
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc

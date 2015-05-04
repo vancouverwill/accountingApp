@@ -63,4 +63,10 @@ var routes = Routes{
 		"/transactions",
 		controllers.TransactionsTodoCreate,
 	},
+	//	Route{
+	//		"404Page",
+	//		"GET",
+	//		"/*",
+	//		controllers.FourZeroFourPage,
+	//	},
 }
