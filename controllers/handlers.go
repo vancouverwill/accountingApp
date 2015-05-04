@@ -18,10 +18,6 @@ func Index(response http.ResponseWriter, request *http.Request) {
 
 func TodoIndex(response http.ResponseWriter, request *http.Request) {
 	log.Println("TodoIndex")
-	//	todos := Todos{
-	//		Todo{Name: "Write presentation"},
-	//		Todo{Name: "Host meetup"},
-	//	}
 
 	todos := models.RepoGetTodos()
 

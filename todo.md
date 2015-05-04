@@ -1,3 +1,5 @@
+- remove todoModel and to handlers code
+
 - get balances
 - get transactions
 

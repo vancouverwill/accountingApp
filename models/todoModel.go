@@ -55,9 +55,9 @@ func RepoGetTodos() Todos {
 		var id int
 		var completed bool
 		err = rows.Scan(&id, &name, &completed)
-		log.Print(rows.Columns())
-		log.Print(id)
-		log.Print(name)
+		//		log.Print(rows.Columns())
+		//		log.Print(id)
+		//		log.Print(name)
 		//		todo := &Todo{Id: id, Name: name, Completed: completed}
 		todo := Todo{Id: id, Name: name, Completed: completed}
 		//		b, err := json.Marshal(todo)
@@ -72,8 +72,8 @@ func RepoGetTodos() Todos {
 	}
 	//	result = result[:i]
 
-	log.Println(results)
-	log.Println(todos)
+	//	log.Println(results)
+	//	log.Println(todos)
 
 	return results
 }
