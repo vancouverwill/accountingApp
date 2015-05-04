@@ -1,5 +1,13 @@
 package models
 
+type Todo struct {
+	Id        int       `json:"id"`
+	Name      string    `json:"name"`
+	ExchangeRate int	`json:"exchangeRate"`  // base currency is US dollar
+	Updated int `json:"updated"`
+	Created	int	`json:"created"`
+}
+
 /**
 *
 * return json exp [{"name" : "xxxx", "exchangeRate" : 2.00},....]
@@ -12,5 +20,6 @@ package models
 
 
 // updateCurrencyExchangeRate(currencyID int, exchangeRate float)
+
 
 // deleteCurrency()

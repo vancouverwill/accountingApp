@@ -13,6 +13,8 @@ type Todo struct {
 	Name      string    `json:"name"`
 	Completed bool      `json:"completed"`
 	Due       time.Time `json:"due"`
+	Updated   int       `json:"updated"`
+	Created   int       `json:"created"`
 }
 
 type Todos []Todo
@@ -20,7 +22,6 @@ type Todos []Todo
 var currentId int
 
 var todos Todos
-var db sql.DB
 
 // Give us some seed data
 func init() {
@@ -32,8 +33,7 @@ func init() {
 }
 
 func RepoGetTodos() Todos {
-	db, e := sql.Open("mysql", "root:@tcp(localhost:3306)/test")
-
+	db, e := myDb.setup()
 	if e != nil {
 		fmt.Print(e)
 	}
@@ -84,7 +84,7 @@ func RepoFindTodo(id int) Todo {
 	//			return t
 	//		}
 	//	}
-	db, e := sql.Open("mysql", "root:@tcp(localhost:3306)/test")
+	db, e := sql.Open("mysql", "root:@tcp(localhost:3306)/accountancyApp")
 	if e != nil {
 		fmt.Print(e)
 	}

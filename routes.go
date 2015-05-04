@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"github.com/vancouverwill/accountingApp/controllers"
+	"net/http"
+)
 
 type Route struct {
 	Name        string
@@ -16,24 +19,36 @@ var routes = Routes{
 		"Index",
 		"GET",
 		"/",
-		Index,
+		controllers.Index,
 	},
 	Route{
 		"TodoIndex",
 		"GET",
 		"/todos",
-		TodoIndex,
+		controllers.TodoIndex,
 	},
 	Route{
 		"TodoShow",
 		"GET",
 		"/todos/{todoId}",
-		TodoShow,
+		controllers.TodoShow,
 	},
 	Route{
 		"TodoCreate",
 		"POST",
 		"/todos",
-		TodoCreate,
+		controllers.TodoCreate,
+	},
+	Route{
+		"TransactionsIndex",
+		"GET",
+		"/transactions",
+		controllers.TransactionsIndex,
+	},
+	Route{
+		"TransactionsTodoCreate",
+		"POST",
+		"/transactions",
+		controllers.TransactionsTodoCreate,
 	},
 }
