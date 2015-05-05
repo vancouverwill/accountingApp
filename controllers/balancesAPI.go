@@ -23,12 +23,14 @@ type ResponseError struct {
 /**
 *
 *
-* exp exp : `curl -H "Content-Type: application/json" -g http://localhost:8080/balances/?AccountAccountHolderOrCompany=Account&relatedToId=18`
+* exp get balance of an account with id relatedToId : `curl -H "Content-Type: application/json" -dG "http://localhost:8080/balances/?AccountAccountHolderOrCompany=Account&relatedToId=18"`
 *
-* productBalance = total sales til now
-* paymentBalance = total payments til now
-* paymentBalanceAfterTax = total payments minus tax
-* balance = payments - sales
+* sample return json
+*
+* {"productBalance" : total sales til now,
+*   "paymentBalance" : total payments til now,
+*    "paymentBalanceAfterTax" : "total payments minus tax",
+*     "balance" : "payments - sales"}
 *
 * return @param json exp {“sales” :  2200”, payments : 2000, "balance" : 200}
 *
@@ -79,7 +81,31 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			if err := json.NewEncoder(response).Encode(object); err != nil {
 				panic(err)
 			}
+		} else {
+			paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
+			object := make(map[string]float32)
+			object["paymentBalance"] = paymentBalance
+			object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
+			object["productBalance"] = productBalance
+			object["balance"] = paymentBalance - productBalance
+
+			response.WriteHeader(http.StatusAccepted)
+			if err := json.NewEncoder(response).Encode(object); err != nil {
+				panic(err)
+			}
 		}
+	}
+
+	paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceAcrossCompany()
+	object := make(map[string]float32)
+	object["paymentBalance"] = paymentBalance
+	object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
+	object["productBalance"] = productBalance
+	object["balance"] = paymentBalance - productBalance
+
+	response.WriteHeader(http.StatusAccepted)
+	if err := json.NewEncoder(response).Encode(object); err != nil {
+		panic(err)
 	}
 
 	log.Println("made it to the end")
