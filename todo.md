@@ -1,5 +1,4 @@
 
-- safely return from transactions if no transacions available
 - GET, POST, PUT, DELETE accounts, accountHolder, currencies and taxrates
 
 

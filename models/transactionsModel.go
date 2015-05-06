@@ -75,6 +75,7 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 
 /**
 *
+* get all transactions
 *
 **/
 func GetTransactions() Transactions {
@@ -91,7 +92,7 @@ func GetTransactions() Transactions {
 		fmt.Print(err)
 	}
 
-	var results Transactions
+	var results = make([]Transaction, 0)
 
 	i := 0
 	for rows.Next() {
@@ -121,6 +122,11 @@ func GetTransactions() Transactions {
 	return results
 }
 
+/**
+*
+* get transaction by transaction id
+*
+**/
 func GetTransaction(transactionId int) Transaction {
 	db, e := myDb.setup()
 	defer db.Close()
@@ -146,6 +152,11 @@ func GetTransaction(transactionId int) Transaction {
 	return transaction
 }
 
+/**
+*
+* get transaction by account id
+*
+**/
 func GetTransactionsForAccountId(accountId int) Transactions {
 	log.Println("GetTransactionsForAccountId")
 	db, e := myDb.setup()
@@ -160,7 +171,7 @@ func GetTransactionsForAccountId(accountId int) Transactions {
 		fmt.Print(err)
 	}
 
-	var results Transactions
+	var results = make([]Transaction, 0)
 
 	i := 0
 	for rows.Next() {
@@ -190,6 +201,11 @@ func GetTransactionsForAccountId(accountId int) Transactions {
 	return results
 }
 
+/**
+*
+* get transaction by account holde id
+*
+**/
 func GetTransactionsForAccountHolderId(accountHolderId int) Transactions {
 	log.Println("GetTransactionsForAccountHolderId")
 
@@ -205,7 +221,7 @@ func GetTransactionsForAccountHolderId(accountHolderId int) Transactions {
 		fmt.Print(err)
 	}
 
-	var results Transactions
+	var results = make([]Transaction, 0)
 
 	i := 0
 	for rows.Next() {

@@ -68,6 +68,8 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 		if AccountAccountHolderOrCompany == "Account" {
 			transactions := models.GetTransactionsForAccountId(relatedToIdInt)
 
+			log.Println("GetTransactionsForAccountId", transactions)
+
 			response.WriteHeader(http.StatusAccepted)
 			if err := json.NewEncoder(response).Encode(transactions); err != nil {
 				panic(err)
