@@ -117,7 +117,7 @@ func GetTransactions() Transactions {
 		results = append(results, transaction)
 		i++
 	}
-	log.Println(results)
+	//	log.Println(results)
 
 	return results
 }
@@ -148,7 +148,7 @@ func GetTransaction(transactionId int) Transaction {
 
 	transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: date}
 
-	log.Println(transaction)
+	//	log.Println(transaction)
 	return transaction
 }
 

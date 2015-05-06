@@ -93,7 +93,7 @@ func TestBalancesValidatesAccountAccountHolderOrCompany(t *testing.T) {
 *
 **/
 func TestTransactionsIndex(t *testing.T) {
-	req, err := http.NewRequest("GET", "http://localhost:8080/transactions/", nil)
+	req, err := http.NewRequest("GET", "http://localhost:8080/transactions/?AccountAccountHolderOrCompany=Company&relatedToId=0", nil)
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)

@@ -45,4 +45,10 @@ var routes = Routes{
 		"/transactions",
 		controllers.TransactionsCreate,
 	},
+	Route{
+		"AccountsIndex",
+		"GET",
+		"/accounts",
+		controllers.AccountsIndex,
+	},
 }
