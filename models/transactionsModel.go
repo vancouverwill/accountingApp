@@ -1,7 +1,6 @@
 package models
 
 import (
-	//	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -78,8 +77,8 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 *
 *
 **/
-//func getTransactions(start_date ???, end_date ???, AccountAccountHolderOrCompany, relatedId Int null) Transactions
 func GetTransactions() Transactions {
+	log.Println("GetTransactions")
 	db, e := myDb.setup()
 	defer db.Close()
 
@@ -145,6 +144,95 @@ func GetTransaction(transactionId int) Transaction {
 
 	log.Println(transaction)
 	return transaction
+}
+
+func GetTransactionsForAccountId(accountId int) Transactions {
+	log.Println("GetTransactionsForAccountId")
+	db, e := myDb.setup()
+	defer db.Close()
+
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	rows, err := db.Query("SELECT id, accountId, details, paymentOrProduct, amount, date FROM "+dbName+" WHERE accountId = ?", accountId)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	var results Transactions
+
+	i := 0
+	for rows.Next() {
+
+		var (
+			id               int
+			accountId        int
+			details          string
+			paymentOrProduct string
+			amount           float32
+			date             string
+		)
+		var err = rows.Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
+
+		layout := "2006-01-02"
+
+		dateString, err := time.Parse(layout, date)
+		if err != nil {
+			fmt.Println(err)
+		}
+		transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: dateString}
+		results = append(results, transaction)
+		i++
+	}
+	log.Println(results)
+
+	return results
+}
+
+func GetTransactionsForAccountHolderId(accountHolderId int) Transactions {
+	log.Println("GetTransactionsForAccountHolderId")
+
+	db, e := myDb.setup()
+	defer db.Close()
+
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	rows, err := db.Query("SELECT t.id, t.accountId, t.details, t.paymentOrProduct, t.amount, t.date from transactions AS t JOIN accounts AS a ON a.id = t.accountId WHERE a.accountHolderId = ?", accountHolderId)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	var results Transactions
+
+	i := 0
+	for rows.Next() {
+
+		var (
+			id               int
+			accountId        int
+			details          string
+			paymentOrProduct string
+			amount           float32
+			date             string
+		)
+		var err = rows.Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
+
+		layout := "2006-01-02"
+
+		dateString, err := time.Parse(layout, date)
+		if err != nil {
+			fmt.Println(err)
+		}
+		transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: dateString}
+		results = append(results, transaction)
+		i++
+	}
+	log.Println(results)
+
+	return results
 }
 
 //deleteTransaction(transaction_id int)

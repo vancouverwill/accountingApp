@@ -23,13 +23,66 @@ import (
 **/
 
 /**
-*
+* GET
 * returns all transactions
 *
 *
 **/
 func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 	log.Println("TransactionsIndex")
+
+	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	err := request.ParseForm()
+	if err != nil {
+		http.Error(response, fmt.Sprintf("error parsing url %v", err), 500)
+	}
+
+	var AccountAccountHolderOrCompany = request.FormValue("AccountAccountHolderOrCompany")
+	var relatedToId = request.FormValue("relatedToId")
+
+	if AccountAccountHolderOrCompany != "Account" && AccountAccountHolderOrCompany != "AccountHolder" && AccountAccountHolderOrCompany != "Company" {
+		error := ResponseError{"invalid_field_value_type", ErrorDetails{"AccountAccountHolderOrCompany", "Account|AccountHolder|Company", AccountAccountHolderOrCompany}}
+		response.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(response).Encode(error); err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	if AccountAccountHolderOrCompany == "Account" || AccountAccountHolderOrCompany == "AccountHolder" {
+		relatedToIdInt, err := strconv.Atoi(relatedToId)
+		log.Println("relatedToIdInt", relatedToIdInt)
+		if err != nil {
+			http.Error(response, "{\"error_code\" : \"server_error\"}", 500)
+			return
+		}
+		if relatedToIdInt <= 0 {
+			error := ResponseError{"invalid_field_value_type", ErrorDetails{"relatedToId", "positive int", relatedToId}}
+			response.WriteHeader(http.StatusBadRequest)
+			if err := json.NewEncoder(response).Encode(error); err != nil {
+				panic(err)
+			}
+			return
+		}
+
+		if AccountAccountHolderOrCompany == "Account" {
+			transactions := models.GetTransactionsForAccountId(relatedToIdInt)
+
+			response.WriteHeader(http.StatusAccepted)
+			if err := json.NewEncoder(response).Encode(transactions); err != nil {
+				panic(err)
+			}
+			return
+		} else {
+			transactions := models.GetTransactionsForAccountHolderId(relatedToIdInt)
+
+			response.WriteHeader(http.StatusAccepted)
+			if err := json.NewEncoder(response).Encode(transactions); err != nil {
+				panic(err)
+			}
+			return
+		}
+	}
 
 	transactions := models.GetTransactions()
 
@@ -39,9 +92,12 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 	if err := json.NewEncoder(response).Encode(transactions); err != nil {
 		panic(err)
 	}
+	return
 }
 
 /**
+* GET a single transaction by id
+*
 * sample usage
 * exp : `curl -H "Content-Type: application/json" -g http://localhost:8080/transactions/12`
 *
@@ -67,12 +123,11 @@ func Transaction(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-/**
-*
-* exp usage
-* `curl -H "Content-Type: application/json" -d '{"accountId":9,"details":"buying lots of products AGAIN","paymentOrProduct":"product","amount":201,"date":"2015-01-19T00:00:00Z","updated":0,"created":0}' http://localhost:8080/transactions`
-*
-**/
+//
+// POST - save transaction
+//
+// example usage
+// `curl -H "Content-Type: application/json" -d '{"accountId":9,"details":"buying lots of products AGAIN","paymentOrProduct":"product","amount":201,"date":"2015-01-19T00:00:00Z","updated":0,"created":0}' http://localhost:8080/transactions`
 func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 	log.Println("TransactionCreate")
 	var transaction models.Transaction
@@ -87,11 +142,7 @@ func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-/**
-*
-*
-*
-**/
+//
 func jsonToObject(response http.ResponseWriter, request *http.Request, transaction models.Transaction) models.Transaction {
 	body, err := ioutil.ReadAll(io.LimitReader(request.Body, 1048576))
 	if err != nil {

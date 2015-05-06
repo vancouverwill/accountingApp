@@ -9,32 +9,20 @@ import (
 	"strconv"
 )
 
-type ErrorDetails struct {
-	FieldName    string `json:"fieldName"`
-	ExpectedType string `json:"expectedType"`
-	SuppliedType string `json:"suppliedType"`
-}
-
-type ResponseError struct {
-	ErrorCode    string `json:"errorCode"`
-	ErrorDetails `json:"errorDetails"`
-}
-
-/**
-*
-*
-* exp get balance of an account with id relatedToId : `curl -H "Content-Type: application/json" -dG "http://localhost:8080/balances/?AccountAccountHolderOrCompany=Account&relatedToId=18"`
-*
-* sample return json
-*
-* {"productBalance" : total sales til now,
-*   "paymentBalance" : total payments til now,
-*    "paymentBalanceAfterTax" : "total payments minus tax",
-*     "balance" : "payments - sales"}
-*
-* return @param json exp {“sales” :  2200”, payments : 2000, "balance" : 200}
-*
-**/
+//
+// query paramters : AccountAccountHolderOrCompany & relatedToId
+//
+// exp get balance of an account with id relatedToId : `curl -H "Content-Type: application/json" -dG "http://localhost:8080/balances/?AccountAccountHolderOrCompany=Account&relatedToId=18"`
+//
+// sample return json
+//
+// {"productBalance" : total sales til now,
+//   "paymentBalance" : total payments til now,
+//    "paymentBalanceAfterTax" : "total payments minus tax",
+//     "balance" : "payments - sales"}
+//
+// return @param json exp {“sales” :  2200”, payments : 2000, "balance" : 200}
+//
 func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 	log.Println("getBalances START")
 
@@ -52,7 +40,9 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 		response.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(response).Encode(error); err != nil {
 			panic(err)
+
 		}
+		return
 	}
 
 	if AccountAccountHolderOrCompany == "Account" || AccountAccountHolderOrCompany == "AccountHolder" {
@@ -66,7 +56,9 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			response.WriteHeader(http.StatusBadRequest)
 			if err := json.NewEncoder(response).Encode(error); err != nil {
 				panic(err)
+
 			}
+			return
 		}
 
 		if AccountAccountHolderOrCompany == "Account" {
@@ -80,7 +72,9 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			response.WriteHeader(http.StatusAccepted)
 			if err := json.NewEncoder(response).Encode(object); err != nil {
 				panic(err)
+
 			}
+			return
 		} else {
 			paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
 			object := make(map[string]float32)
@@ -92,7 +86,9 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			response.WriteHeader(http.StatusAccepted)
 			if err := json.NewEncoder(response).Encode(object); err != nil {
 				panic(err)
+
 			}
+			return
 		}
 	}
 
@@ -110,4 +106,5 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 
 	log.Println("made it to the end")
 	response.WriteHeader(http.StatusOK)
+	return
 }
