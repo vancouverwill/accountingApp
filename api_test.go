@@ -113,20 +113,30 @@ func TestTransactionsIndex(t *testing.T) {
 *
 * test POST transactions from the company
 *
+* working on accepting JSON body
+*
 **/
-func TestTransactionsIndex(t *testing.T) {
-	req, err := http.NewRequest("POST", "http://localhost:8080/transactions/", nil)
+/*func TestTransactionsCreate(t *testing.T) {
+
+	var transaction models.Transaction
+	transaction = models.Transaction{AccountId: 9, Details: "buying lots of products AGAIN", Amount: 201, Date: "2015-01-19T00:00:00Z", Updated: 0, Created: 0}
+
+	b, err := json.Marshal(transaction)
+	if err != nil {
+		t.Error("error:", err)
+	}
+	req, err := http.NewRequest("POST", "http://localhost:8080/transactions/", bytes.NewBufferString(b))
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)
 	}
 
 	w := httptest.NewRecorder()
-	controllers.TransactionsIndex(w, req)
+	controllers.TransactionsCreate(w, req)
 
 	if w.Code != 200 && w.Code != 202 {
 		t.Error("TransactionsIndex() did not work as expected. the status was not ", http.StatusOK, ", it was ", w.Code)
 	}
 
 	t.Log("status:", w.Code, "body:", w.Body.String())
-}
+}*/

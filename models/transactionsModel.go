@@ -46,17 +46,11 @@ func (t Transaction) SaveTransaction() {
 		fmt.Print(e)
 	}
 
-	currency := getCurrencyByAccountId(t.AccountId)
-
-	log.Println("currency", currency)
-
-	amountInUS := t.Amount * currency.ExchangeRate
-
 	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
 	if err != nil {
 		fmt.Print(err)
 	}
-	res, err := stmt.Exec(t.AccountId, t.Details, amountInUS, t.Date)
+	res, err := stmt.Exec(t.AccountId, t.Details, t.Amount, t.Date)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -259,6 +253,38 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 	log.Println(results)
 
 	return results
+}
+
+
+func saveTransactionByType(o.AccountHolderId int, type string, amount float32) {
+	db, e := myDb.setup()
+	defer db.Close()
+
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	if err != nil {
+		fmt.Print(err)
+	}
+	res, err := stmt.Exec(t.AccountId, t.Details, t.Amount, t.Date)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	RowsAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("RowsAffected", RowsAffected)
+	t.Id = int(lastId)
+	log.Println("transaction entered")
+	log.Println(t)
 }
 
 //deleteTransaction(transaction_id int)

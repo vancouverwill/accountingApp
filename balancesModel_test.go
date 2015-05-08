@@ -17,3 +17,14 @@ func TestGetBalancesByCompany(t *testing.T) {
 
 	t.Log("testGetAccountByAccountName successful")
 }
+
+func TestCreateUserAddAnOrderThenVerifyBalanceIsZero(t *testing.T) {
+	t.Log("TestCreateUserAddAnOrderThenVerifyBalanceIsZero")
+	var accountHolder models.AccountHolder = models.CreateAccountHolder("Issac Newton", "Engineer")
+	accountHolder.SetAccountHolderCurrency("US DOLLAR")
+	accountHolder.SetAccountHolderTaxRate("US Tax")
+	accountHolder.Save()
+	t.Log("accountHolder", accountHolder)
+	order := accountHolder.NewOrder()
+	t.Log("order", order)
+}

@@ -136,6 +136,15 @@ func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 
 	transaction = jsonToObject(response, request, transaction)
 	log.Println(transaction)
+
+	currency := models.GetCurrencyByAccountId(transaction.AccountId)
+
+	log.Println("currency", currency)
+
+	amountInUS := transaction.Amount * currency.ExchangeRate
+
+	transaction.Amount = amountInUS
+
 	transaction.SaveTransaction()
 	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	response.WriteHeader(http.StatusCreated)

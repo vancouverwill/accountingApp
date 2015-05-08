@@ -31,14 +31,14 @@ func CreateAccountHolder(name string, jobTitle string) AccountHolder {
 
 func (ah *AccountHolder) SetAccountHolderCurrency(currencyName string) {
 	log.Println("SetAccountHolderCurrency")
-	currency := getCurrencyByCurrencyName(currencyName)
+	currency := GetCurrencyByCurrencyName(currencyName)
 	ah.CurrencyId = currency.Id
 	log.Println(ah)
 }
 
 func (ah *AccountHolder) SetAccountHolderTaxRate(name string) {
 	log.Println("SetAccountHolderTaxRate")
-	taxRate := getTaxRateByName(name)
+	taxRate := GetTaxRateByName(name)
 	ah.TaxRateId = taxRate.Id
 	log.Println(ah)
 }
@@ -71,6 +71,27 @@ func (ah *AccountHolder) Save() {
 	log.Println("RowsAffected", RowsAffected)
 	ah.Id = int(lastId)
 	log.Println("AccountHolder entered")
+}
+
+func (ah *AccountHolder) NewOrder() Order {
+	db, e := myDb.setup()
+	defer db.Close()
+	if e != nil {
+		fmt.Print(e)
+	}
+	var (
+		RevenueAccountId      int
+		TaxAccountId          int
+		ProductSalesAccountId int
+	)
+	err := db.QueryRow("SELECT id, name, jobTitle, currencyId, taxRateId FROM accountHolders WHERE name = ?", accountName).Scan(&id, &name, &jobTitle, &currencyId, &taxRateId)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	order := Order{AccountHolderId: ah.Id, CurrencyId: ah.CurrencyId, TaxRateId: ah.TaxRateId}
+	log.Println("NewOrder", order)
+	return order
 }
 
 /**

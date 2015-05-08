@@ -26,7 +26,7 @@ type Currency struct {
 
 // deleteCurrency()
 
-func getCurrencyByAccountId(accountId int) Currency {
+func GetCurrencyByAccountId(accountId int) Currency {
 	db, e := myDb.setup()
 	defer db.Close()
 	if e != nil {
@@ -54,7 +54,7 @@ func getCurrencyByAccountId(accountId int) Currency {
 	return currency
 }
 
-func getCurrencyByCurrencyName(currencyName string) Currency {
+func GetCurrencyByCurrencyName(currencyName string) Currency {
 	log.Println("getCurrencyByCurrencyName")
 	db, e := myDb.setup()
 	defer db.Close()

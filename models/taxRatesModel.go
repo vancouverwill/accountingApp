@@ -13,7 +13,7 @@ type TaxRate struct {
 	Created int     `json:"created"`
 }
 
-func getTaxRateByName(name string) TaxRate {
+func GetTaxRateByName(name string) TaxRate {
 	log.Println("getTaxRateByName")
 	db, e := myDb.setup()
 	defer db.Close()
