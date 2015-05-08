@@ -108,3 +108,25 @@ func TestTransactionsIndex(t *testing.T) {
 
 	t.Log("status:", w.Code, "body:", w.Body.String())
 }
+
+/**
+*
+* test POST transactions from the company
+*
+**/
+func TestTransactionsIndex(t *testing.T) {
+	req, err := http.NewRequest("POST", "http://localhost:8080/transactions/", nil)
+	if err != nil {
+		t.Error("index() did not work as expected.")
+		t.Log(err)
+	}
+
+	w := httptest.NewRecorder()
+	controllers.TransactionsIndex(w, req)
+
+	if w.Code != 200 && w.Code != 202 {
+		t.Error("TransactionsIndex() did not work as expected. the status was not ", http.StatusOK, ", it was ", w.Code)
+	}
+
+	t.Log("status:", w.Code, "body:", w.Body.String())
+}

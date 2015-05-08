@@ -136,10 +136,10 @@ func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 
 	transaction = jsonToObject(response, request, transaction)
 	log.Println(transaction)
-	t := models.MyTransaction.SaveTransaction(transaction)
+	transaction.SaveTransaction()
 	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	response.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(response).Encode(t); err != nil {
+	if err := json.NewEncoder(response).Encode(transaction); err != nil {
 		panic(err)
 	}
 }
