@@ -19,8 +19,21 @@ func (o *Order) addItem(name string, cost float32) {
 }
 
 func (o *Order) ProcessProduct() {
-
 	amount := -o.Cost
+	SaveTransactionByType(o.AccountHolderId, "product", amount, o.Name)
+}
 
-	saveTransactionByType(o.AccountHolderId, "product", amount)
+func (o *Order) ProcessPayment() {
+
+	currency := models.GetCurrencyByAccountId(o.AccountHolderId)
+
+	log.Println("currency", currency)
+
+	amountInUS := o.Amount * currency.ExchangeRate
+
+	taxRate = GetTaxByAccountId(o.AccountHolderId)
+
+	amountInUS *
+
+		SaveTransactionByType(o.AccountHolderId, "payment", amount, o.Name)
 }

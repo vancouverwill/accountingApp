@@ -1,11 +1,14 @@
 package main
 
 import (
+	"github.com/vancouverwill/accountingApp/models"
 	"testing"
 )
 
 func TestCreateTransaction(t *testing.T) {
 	t.Log("TestCreateTransaction")
+
+	models.SaveTransactionByType(5, "revenue", 499, "my first sale")
 
 	//	transaction := Transaction{}
 	//	var accountHolder models.AccountHolder = models.GetAccountHolderByName("Darrel Mathes")

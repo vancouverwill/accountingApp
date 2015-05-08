@@ -258,36 +258,34 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 	return results
 }
 
-func saveTransactionByType(accountHolderId int, AccountType string, amount float32) {
-	//	db, e := myDb.setup()
-	//	defer db.Close()
+func SaveTransactionByType(accountHolderId int, AccountType string, amount float32, details string) {
+	db, e := myDb.setup()
+	defer db.Close()
 
-	//waiting til db is refactored from accounts to accountTypes
-	//	if e != nil {
-	//		fmt.Print(e)
-	//	}
+	if e != nil {
+		fmt.Print(e)
+	}
 
-	//	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
-	//	if err != nil {
-	//		fmt.Print(err)
-	//	}
-	//	res, err := stmt.Exec(t.accountTypeId, t.Details, t.Amount, t.Date)
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	}
+	stmt, err := db.Prepare("INSERT INTO transactions (accountHolderId, accountTypeId, details, amount, date, updated, created) values (?, (SELECT id FROM accountTypes WHERE type = ?), ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	if err != nil {
+		fmt.Print(err)
+	}
+	res, err := stmt.Exec(accountHolderId, AccountType, details, amount, time.Now())
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	//	lastId, err := res.LastInsertId()
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	}
-	//	RowsAffected, err := res.RowsAffected()
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	}
-	//	log.Println("RowsAffected", RowsAffected)
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	RowsAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("RowsAffected", RowsAffected)
 	//	t.Id = int(lastId)
-	//	log.Println("transaction entered")
-	//	log.Println(t)
+	log.Println("transaction entered", lastId)
 }
 
 //deleteTransaction(transaction_id int)
