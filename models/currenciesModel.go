@@ -37,7 +37,13 @@ func getCurrencyByAccountId(accountId int) Currency {
 		name         string
 		exchangeRate float32
 	)
-	err := db.QueryRow("SELECT c.id, c.name, c.exchangeRate FROM "+"currencies"+" AS c JOIN accounts AS a ON a.currencyId = c.id WHERE a.id = ?", accountId).Scan(&id, &name, &exchangeRate)
+	selectStatement := "SELECT c.id, c.name, c.exchangeRate "
+	selectStatement += "FROM currencies AS c "
+	selectStatement += "JOIN accountHolders AS ah ON ah.currencyId = c.id "
+	selectStatement += "JOIN accounts AS a ON a.accountHolderId = ah.id "
+	selectStatement += "WHERE a.id = ?"
+
+	err := db.QueryRow(selectStatement, accountId).Scan(&id, &name, &exchangeRate)
 	if err != nil {
 		fmt.Print(err)
 	}
