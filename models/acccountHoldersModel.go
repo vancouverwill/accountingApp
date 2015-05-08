@@ -43,7 +43,7 @@ func (ah *AccountHolder) SetAccountHolderTaxRate(name string) {
 	log.Println(ah)
 }
 
-func SaveAccount(accountHolder AccountHolder) AccountHolder {
+func (ah *AccountHolder) Save() {
 	db, e := myDb.setup()
 	defer db.Close()
 
@@ -51,11 +51,11 @@ func SaveAccount(accountHolder AccountHolder) AccountHolder {
 		fmt.Print(e)
 	}
 
-	stmt, err := db.Prepare("INSERT INTO accounHolders (name, jobTitle, taxRateId, currencyId) values (?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	stmt, err := db.Prepare("INSERT INTO accountHolders (name, jobTitle, taxRateId, currencyId, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
 	if err != nil {
 		fmt.Print(err)
 	}
-	res, err := stmt.Exec(accountHolder.Name, accountHolder.JobTitle, accountHolder.TaxRateId, accountHolder.CurrencyId)
+	res, err := stmt.Exec(ah.Name, ah.JobTitle, ah.TaxRateId, ah.CurrencyId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,9 +69,8 @@ func SaveAccount(accountHolder AccountHolder) AccountHolder {
 		log.Fatal(err)
 	}
 	log.Println("RowsAffected", RowsAffected)
-	accountHolder.Id = int(lastId)
+	ah.Id = int(lastId)
 	log.Println("AccountHolder entered")
-	return accountHolder
 }
 
 /**
