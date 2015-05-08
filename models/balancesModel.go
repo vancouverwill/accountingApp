@@ -58,14 +58,14 @@ func GetBalanceForAccountholderId(accountHolderId int) (float32, float32, float3
 	var revenue float32
 	var productSales float32
 	selectStatement := "SELECT"
-	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"tax\" "
+	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"revenue\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
 	//	selectStatement += "JOIN accountHolders AS ah ON ah.id = a.accountHolderId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
 	selectStatement += "WHERE a.accountHolderId =  ? AND  a.type = \"revenue\"), "
 
-	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"revenue\" "
+	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"tax\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
@@ -94,31 +94,31 @@ func GetBalanceAcrossCompany() (float32, float32, float32) {
 	if e != nil {
 		fmt.Print(e)
 	}
-	var paymentBalance float32
-	var paymentBalanceAfterTax float32
-	var productBalance float32
+	var tax float32
+	var revenue float32
+	var productSales float32
 	selectStatement := "SELECT"
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"paymentBalance\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
-	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE paymentOrProduct = \"payment\"), "
+	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
+	selectStatement += "WHERE a.type = \"payment\"), "
 
-	selectStatement += "(SELECT IFNULL(sum(amount - (amount * tr.taxRate)), 0.00) AS \"paymentBalanceAfterTax\" "
+	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"tax\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
-	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE paymentOrProduct = \"payment\"), "
+	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
+	selectStatement += "WHERE a.type = \"tax\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"accountAmount\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
-	selectStatement += "WHERE paymentOrProduct = \"product\") AS \"productBalance\""
+	selectStatement += "WHERE a.type = \"product\") AS \"productSales\""
 
-	err := db.QueryRow(selectStatement).Scan(&paymentBalance, &paymentBalanceAfterTax, &productBalance)
+	err := db.QueryRow(selectStatement).Scan(&revenue, &tax, &productSales)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	return paymentBalance, paymentBalanceAfterTax, productBalance
+	return revenue, tax, productSales
 }

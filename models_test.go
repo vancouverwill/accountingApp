@@ -5,11 +5,12 @@ import (
 	"testing"
 )
 
-func testGetAccountByAccountName(t *testing.T) {
-	var account models.Account = models.GetAccountByName("Atlanta WholeSale")
+func TestGetAccountByAccountName(t *testing.T) {
+	t.Log("testGetAccountByAccountName")
+	var accountHolder models.AccountHolder = models.GetAccountHolderByName("Darrel Mathes")
 
-	if account.Address != "200 Centre Avenue" {
-		t.Error("testGetAccountByAccountName did not work as expected. the address was not as expected, it was ", account.Address)
+	if accountHolder.JobTitle != "Sales South East" {
+		t.Error("testGetAccountByAccountName did not work as expected. the address was not as expected, it was ", accountHolder.JobTitle)
 	}
 	t.Log("testGetAccountByAccountName successful")
 }

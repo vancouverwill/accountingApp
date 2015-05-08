@@ -51,7 +51,7 @@ func Test404Page(t *testing.T) {
 *
 **/
 func TestBalancesIndex(t *testing.T) {
-	req, err := http.NewRequest("GET", "http://localhost:8080/balances/?AccountHolderOrCompany=Account&relatedToId=9", nil)
+	req, err := http.NewRequest("GET", "http://localhost:8080/balances/?AccountHolderOrCompany=AccountHolder&relatedToId=9", nil)
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)
@@ -89,7 +89,7 @@ func TestBalancesValidatesAccountHolderOrCompany(t *testing.T) {
 
 /**
 *
-* test GET all transactions without filter
+* test GET all transactions from the company
 *
 **/
 func TestTransactionsIndex(t *testing.T) {

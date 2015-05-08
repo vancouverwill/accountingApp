@@ -8,14 +8,13 @@ import (
 )
 
 type Transaction struct {
-	Id               int       `json:"id"`
-	AccountId        int       `json:"accountId"`
-	Details          string    `json:"details"`
-	PaymentOrProduct string    `json:"paymentOrProduct"`
-	Amount           float32   `json:"amount"` // saved as US dollars
-	Date             time.Time `json:"date"`
-	Updated          int       `json:"updated"`
-	Created          int       `json:"created"`
+	Id        int       `json:"id"`
+	AccountId int       `json:"accountId"`
+	Details   string    `json:"details"`
+	Amount    float32   `json:"amount"` // saved as US dollars
+	Date      time.Time `json:"date"`
+	Updated   int       `json:"updated"`
+	Created   int       `json:"created"`
 }
 
 type TransactionViewable struct {
@@ -57,7 +56,7 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 	if err != nil {
 		fmt.Print(err)
 	}
-	res, err := stmt.Exec(t.AccountId, t.Details, t.PaymentOrProduct, amountInUS, t.Date)
+	res, err := stmt.Exec(t.AccountId, t.Details, amountInUS, t.Date)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,7 +111,7 @@ func GetTransactions() TransactionViewables {
 			accountType string
 			date        string
 		)
-		var err = rows.Scan(&id, &accountId, &details, &amount, &accountType, &date)
+		var err = rows.Scan(&id, &accountId, &details, &amount, &date, &accountType)
 
 		layout := "2006-01-02"
 

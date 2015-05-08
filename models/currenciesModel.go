@@ -47,3 +47,25 @@ func getCurrencyByAccountId(accountId int) Currency {
 	log.Println(currency)
 	return currency
 }
+
+func getCurrencyByCurrencyName(currencyName string) Currency {
+	log.Println("getCurrencyByCurrencyName")
+	db, e := myDb.setup()
+	defer db.Close()
+	if e != nil {
+		fmt.Print(e)
+	}
+	var (
+		id           int
+		name         string
+		exchangeRate float32
+	)
+	err := db.QueryRow("SELECT c.id, c.name, c.exchangeRate FROM currencies AS c WHERE c.name = ?", currencyName).Scan(&id, &name, &exchangeRate)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	currency := Currency{Id: id, Name: name, ExchangeRate: exchangeRate}
+
+	return currency
+}

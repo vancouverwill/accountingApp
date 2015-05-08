@@ -25,7 +25,7 @@ func AccountsIndex(response http.ResponseWriter, request *http.Request) {
 	//		fmt.Print(err)
 	//	}
 
-	account := models.GetAccountByName(AccountName)
+	account := models.GetAccountHolderByName(AccountName)
 
 	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	response.WriteHeader(http.StatusOK)
