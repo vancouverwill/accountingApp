@@ -14,9 +14,9 @@ import (
 
 /**
 *
-* exp exp : `curl -H "Content-Type: application/json" -g http://localhost:8080/transactions/?AccountAccountHolderOrCompany=Account&relatedToId=18`
+* exp exp : `curl -H "Content-Type: application/json" -g http://localhost:8080/transactions/?AccountHolderOrCompany=Account&relatedToId=18`
 *
-* getTransactions possible query string parameters (start_date,end_date, AccountAccountHolderOrCompany string, relatedId = null)
+* getTransactions possible query string parameters (start_date,end_date, AccountHolderOrCompany string, relatedId = null)
 *
 *
 *
@@ -37,11 +37,11 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 		http.Error(response, fmt.Sprintf("error parsing url %v", err), 500)
 	}
 
-	var AccountAccountHolderOrCompany = request.FormValue("AccountAccountHolderOrCompany")
+	var AccountHolderOrCompany = request.FormValue("AccountHolderOrCompany")
 	var relatedToId = request.FormValue("relatedToId")
 
-	if AccountAccountHolderOrCompany != "Account" && AccountAccountHolderOrCompany != "AccountHolder" && AccountAccountHolderOrCompany != "Company" {
-		error := ResponseError{"invalid_field_value_type", ErrorDetails{"AccountAccountHolderOrCompany", "Account|AccountHolder|Company", AccountAccountHolderOrCompany}}
+	if AccountHolderOrCompany != "AccountHolder" && AccountHolderOrCompany != "Company" {
+		error := ResponseError{"invalid_field_value_type", ErrorDetails{"AccountHolderOrCompany", "Account|AccountHolder|Company", AccountHolderOrCompany}}
 		response.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(response).Encode(error); err != nil {
 			panic(err)
@@ -49,7 +49,7 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	if AccountAccountHolderOrCompany == "Account" || AccountAccountHolderOrCompany == "AccountHolder" {
+	if AccountHolderOrCompany == "AccountHolder" {
 		relatedToIdInt, err := strconv.Atoi(relatedToId)
 		log.Println("relatedToIdInt", relatedToIdInt)
 		if err != nil {
@@ -65,25 +65,25 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		if AccountAccountHolderOrCompany == "Account" {
-			transactions := models.GetTransactionsForAccountId(relatedToIdInt)
+		//		if AccountHolderOrCompany == "Account" {
+		//			transactions := models.GetTransactionsForAccountId(relatedToIdInt)
 
-			log.Println("GetTransactionsForAccountId", transactions)
+		//			log.Println("GetTransactionsForAccountId", transactions)
 
-			response.WriteHeader(http.StatusAccepted)
-			if err := json.NewEncoder(response).Encode(transactions); err != nil {
-				panic(err)
-			}
-			return
-		} else {
-			transactions := models.GetTransactionsForAccountHolderId(relatedToIdInt)
+		//			response.WriteHeader(http.StatusAccepted)
+		//			if err := json.NewEncoder(response).Encode(transactions); err != nil {
+		//				panic(err)
+		//			}
+		//			return
+		//		} else {
+		transactions := models.GetTransactionsForAccountHolderId(relatedToIdInt)
 
-			response.WriteHeader(http.StatusAccepted)
-			if err := json.NewEncoder(response).Encode(transactions); err != nil {
-				panic(err)
-			}
-			return
+		response.WriteHeader(http.StatusAccepted)
+		if err := json.NewEncoder(response).Encode(transactions); err != nil {
+			panic(err)
 		}
+		return
+		//		}
 	}
 
 	transactions := models.GetTransactions()

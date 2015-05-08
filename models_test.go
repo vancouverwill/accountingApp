@@ -11,7 +11,17 @@ func testGetAccountByAccountName(t *testing.T) {
 	if account.Address != "200 Centre Avenue" {
 		t.Error("testGetAccountByAccountName did not work as expected. the address was not as expected, it was ", account.Address)
 	}
+	t.Log("testGetAccountByAccountName successful")
 }
+
+/*func testGetAccountHolderByAccountName(t *testing.T) {
+	var account models.Account = models.GetAccountByName("Atlanta WholeSale")
+
+	if account.Address != "200 Centre Avenue" {
+		t.Error("testGetAccountByAccountName did not work as expected. the address was not as expected, it was ", account.Address)
+	}
+	t.Log("testGetAccountByAccountName successful")
+}*/
 
 /** test transactions return expected no of transactions for an accountID
 *

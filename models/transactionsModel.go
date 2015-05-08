@@ -18,12 +18,16 @@ type Transaction struct {
 	Created          int       `json:"created"`
 }
 
+type TransactionViewable struct {
+	Transaction
+	AccountType string `json:"paymentOrProduct"`
+}
+
 type TransactionModel struct {
 }
 
+type TransactionViewables []TransactionViewable
 type Transactions []Transaction
-
-var dbName string = "transactions"
 
 var MyTransaction = TransactionModel{}
 
@@ -78,7 +82,7 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 * get all transactions
 *
 **/
-func GetTransactions() Transactions {
+func GetTransactions() TransactionViewables {
 	log.Println("GetTransactions")
 	db, e := myDb.setup()
 	defer db.Close()
@@ -87,25 +91,28 @@ func GetTransactions() Transactions {
 		fmt.Print(e)
 	}
 
-	rows, err := db.Query("select id, accountId, details, paymentOrProduct, amount, date from " + dbName)
+	selectStatement := "SELECT t.id, t.accountId, t.details, t.amount, t.date, a.type AS accountType FROM transactions AS t "
+	selectStatement += "JOIN accounts AS a ON a.id = t.accountId"
+
+	rows, err := db.Query(selectStatement)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	var results = make([]Transaction, 0)
+	var results = make([]TransactionViewable, 0)
 
 	i := 0
 	for rows.Next() {
 
 		var (
-			id               int
-			accountId        int
-			details          string
-			paymentOrProduct string
-			amount           float32
-			date             string
+			id          int
+			accountId   int
+			details     string
+			amount      float32
+			accountType string
+			date        string
 		)
-		var err = rows.Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
+		var err = rows.Scan(&id, &accountId, &details, &amount, &accountType, &date)
 
 		layout := "2006-01-02"
 
@@ -113,7 +120,7 @@ func GetTransactions() Transactions {
 		if err != nil {
 			fmt.Println(err)
 		}
-		transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: dateString}
+		transaction := TransactionViewable{Transaction{Id: id, AccountId: accountId, Details: details, Amount: amount, Date: dateString}, accountType}
 		results = append(results, transaction)
 		i++
 	}
@@ -134,19 +141,18 @@ func GetTransaction(transactionId int) Transaction {
 		fmt.Print(e)
 	}
 	var (
-		id               int
-		accountId        int
-		details          string
-		paymentOrProduct string
-		amount           float32
-		date             time.Time
+		id        int
+		accountId int
+		details   string
+		amount    float32
+		date      time.Time
 	)
-	err := db.QueryRow("SELECT id, accountId, details, paymentOrProduct, amount, date FROM "+dbName+" WHERE id = ?", transactionId).Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
+	err := db.QueryRow("SELECT id, accountId, details, amount, date FROM transactions WHERE id = ?", transactionId).Scan(&id, &accountId, &details, &amount, &date)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: date}
+	transaction := Transaction{Id: id, AccountId: accountId, Details: details, Amount: amount, Date: date}
 
 	//	log.Println(transaction)
 	return transaction
@@ -157,7 +163,7 @@ func GetTransaction(transactionId int) Transaction {
 * get transaction by account id
 *
 **/
-func GetTransactionsForAccountId(accountId int) Transactions {
+/*func GetTransactionsForAccountId(accountId int) Transactions {
 	log.Println("GetTransactionsForAccountId")
 	db, e := myDb.setup()
 	defer db.Close()
@@ -166,7 +172,7 @@ func GetTransactionsForAccountId(accountId int) Transactions {
 		fmt.Print(e)
 	}
 
-	rows, err := db.Query("SELECT id, accountId, details, paymentOrProduct, amount, date FROM "+dbName+" WHERE accountId = ?", accountId)
+	rows, err := db.Query("SELECT id, accountId, details, paymentOrProduct, amount, date FROM transactions WHERE accountId = ?", accountId)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -199,15 +205,15 @@ func GetTransactionsForAccountId(accountId int) Transactions {
 	log.Println(results)
 
 	return results
-}
+}*/
 
 /**
 *
 * get transaction by account holde id
 *
 **/
-func GetTransactionsForAccountHolderId(accountHolderId int) Transactions {
-	log.Println("GetTransactionsForAccountHolderId")
+func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables {
+	log.Println("GetTransactionsForAccountHolderId", accountHolderId)
 
 	db, e := myDb.setup()
 	defer db.Close()
@@ -216,25 +222,30 @@ func GetTransactionsForAccountHolderId(accountHolderId int) Transactions {
 		fmt.Print(e)
 	}
 
-	rows, err := db.Query("SELECT t.id, t.accountId, t.details, t.paymentOrProduct, t.amount, t.date from transactions AS t JOIN accounts AS a ON a.id = t.accountId WHERE a.accountHolderId = ?", accountHolderId)
+	selectStatement := "SELECT t.id, t.accountId, t.details, a.type AS accountType, t.amount, t.date "
+	selectStatement += "FROM transactions AS t "
+	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "WHERE a.accountHolderId = ? "
+
+	rows, err := db.Query(selectStatement, accountHolderId)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	var results = make([]Transaction, 0)
+	var results = make([]TransactionViewable, 0)
 
 	i := 0
 	for rows.Next() {
 
 		var (
-			id               int
-			accountId        int
-			details          string
-			paymentOrProduct string
-			amount           float32
-			date             string
+			id          int
+			accountId   int
+			accountType string
+			details     string
+			amount      float32
+			date        string
 		)
-		var err = rows.Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
+		var err = rows.Scan(&id, &accountId, &details, &accountType, &amount, &date)
 
 		layout := "2006-01-02"
 
@@ -242,8 +253,9 @@ func GetTransactionsForAccountHolderId(accountHolderId int) Transactions {
 		if err != nil {
 			fmt.Println(err)
 		}
-		transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: dateString}
-		results = append(results, transaction)
+		transaction := Transaction{Id: id, AccountId: accountId, Details: details, Amount: amount, Date: dateString}
+		transactionViewable := TransactionViewable{transaction, accountType}
+		results = append(results, transactionViewable)
 		i++
 	}
 	log.Println(results)

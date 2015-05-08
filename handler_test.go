@@ -47,11 +47,11 @@ func Test404Page(t *testing.T) {
 
 /**
 *
-* test the balance with a valid AccountAccountHolderOrCompany and relatedToId
+* test the balance with a valid AccountHolderOrCompany and relatedToId
 *
 **/
 func TestBalancesIndex(t *testing.T) {
-	req, err := http.NewRequest("GET", "http://localhost:8080/balances/?AccountAccountHolderOrCompany=Account&relatedToId=9", nil)
+	req, err := http.NewRequest("GET", "http://localhost:8080/balances/?AccountHolderOrCompany=Account&relatedToId=9", nil)
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)
@@ -69,11 +69,11 @@ func TestBalancesIndex(t *testing.T) {
 
 /**
 *
-* test non valid entry of "country" for AccountAccountHolderOrCompany paramater of GET
+* test non valid entry of "country" for AccountHolderOrCompany paramater of GET
 *
 **/
-func TestBalancesValidatesAccountAccountHolderOrCompany(t *testing.T) {
-	req, err := http.NewRequest("GET", "http://localhost:8080/balances/?AccountAccountHolderOrCompany=Country&relatedToId=234", nil)
+func TestBalancesValidatesAccountHolderOrCompany(t *testing.T) {
+	req, err := http.NewRequest("GET", "http://localhost:8080/balances/?AccountHolderOrCompany=Country&relatedToId=234", nil)
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)
@@ -93,7 +93,7 @@ func TestBalancesValidatesAccountAccountHolderOrCompany(t *testing.T) {
 *
 **/
 func TestTransactionsIndex(t *testing.T) {
-	req, err := http.NewRequest("GET", "http://localhost:8080/transactions/?AccountAccountHolderOrCompany=Company&relatedToId=0", nil)
+	req, err := http.NewRequest("GET", "http://localhost:8080/transactions/?AccountHolderOrCompany=Company&relatedToId=0", nil)
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)
