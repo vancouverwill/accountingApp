@@ -129,7 +129,7 @@ func Transaction(response http.ResponseWriter, request *http.Request) {
 // POST - save transaction
 //
 // example usage
-// `curl -H "Content-Type: application/json" -d '{"accountId":9,"details":"buying lots of products AGAIN","paymentOrProduct":"product","amount":201,"date":"2015-01-19T00:00:00Z","updated":0,"created":0}' http://localhost:8080/transactions`
+// `curl -H "Content-Type: application/json" -d '{"accountId":9,"details":"buying lots of products AGAIN","amount":201,"date":"2015-01-19T00:00:00Z","updated":0,"created":0}' http://localhost:8080/transactions`
 func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 	log.Println("TransactionCreate")
 	var transaction models.Transaction
