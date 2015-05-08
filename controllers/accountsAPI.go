@@ -20,11 +20,6 @@ func AccountsIndex(response http.ResponseWriter, request *http.Request) {
 
 	log.Println("AccountName", AccountName)
 
-	//	transactionIdInt, err := strconv.Atoi(transactionId)
-	//	if err != nil {
-	//		fmt.Print(err)
-	//	}
-
 	account := models.GetAccountHolderByName(AccountName)
 
 	response.Header().Set("Content-Type", "application/json; charset=UTF-8")

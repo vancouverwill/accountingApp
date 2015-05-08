@@ -36,11 +36,26 @@ ALTER TABLE transactions DROP COLUMN paymentOrProduct;
 DELETE FROM transactions;
 DELETE  FROM accounts;
 
-INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "revenue" AS type
+-- INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "revenue" AS type
 from accountHolders;
 
-INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "tax" AS type
+-- INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "tax" AS type
 from accountHolders;
 
-INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "product" AS type
+-- INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "product" AS type
 from accountHolders;
+
+INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "product") ;
+INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "revenue") ;
+INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "tax") ;
+
+ALTER TABLE accounts DROP COLUMN accountHolderId;
+
+Rename Table accounts TO accountTypes
+
+
+ALTER TABLE transactions ADD `accountTypeId` int not null;
+
+ALTER TABLE transactions ADD `accountHolderId` int not null;
+
+ALTER TABLE transactions DROP COLUMN accountId;

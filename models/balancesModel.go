@@ -22,15 +22,15 @@ import (
 	selectStatement := "SELECT"
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"paymentBalance\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN accountTypes AS a ON a.id = t.accountTypeId "
 	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE t.accountId =  ? AND  paymentOrProduct = \"payment\"), "
+	selectStatement += "WHERE t.accountTypeId =  ? AND  paymentOrProduct = \"payment\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount - (amount * tr.taxRate)), 0.00) AS \"paymentBalanceAfterTax\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
 	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE t.accountId =  ? AND  paymentOrProduct = \"payment\"), "
+	selectStatement += "WHERE t.accountTypeId =  ? AND  paymentOrProduct = \"payment\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"accountAmount\" "
 	selectStatement += "FROM `transactions` AS t "
@@ -60,21 +60,21 @@ func GetBalanceForAccountholderId(accountHolderId int) (float32, float32, float3
 	selectStatement := "SELECT"
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"revenue\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
-	//	selectStatement += "JOIN accountHolders AS ah ON ah.id = a.accountHolderId "
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
+	//		selectStatement += "JOIN accountHolders AS ah ON ah.id = a.accountHolderId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE a.accountHolderId =  ? AND  a.type = \"revenue\"), "
+	selectStatement += "WHERE t.accountHolderId =  ? AND  at.type = \"revenue\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"tax\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE a.accountHolderId =  ? AND  a.type = \"tax\"), "
+	selectStatement += "WHERE t.accountHolderId =  ? AND  at.type = \"tax\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"productSales\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
-	selectStatement += "WHERE a.accountHolderId =  ? AND  a.type = \"product\") AS \"productSales\""
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
+	selectStatement += "WHERE t.accountHolderId =  ? AND  at.type = \"product\") AS \"productSales\""
 
 	err := db.QueryRow(selectStatement, accountHolderId, accountHolderId, accountHolderId).Scan(&revenue, &tax, &productSales)
 	if err != nil {
@@ -100,20 +100,20 @@ func GetBalanceAcrossCompany() (float32, float32, float32) {
 	selectStatement := "SELECT"
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"paymentBalance\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE a.type = \"payment\"), "
+	selectStatement += "WHERE at.type = \"payment\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"tax\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE a.type = \"tax\"), "
+	selectStatement += "WHERE at.type = \"tax\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"accountAmount\" "
 	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
-	selectStatement += "WHERE a.type = \"product\") AS \"productSales\""
+	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
+	selectStatement += "WHERE at.type = \"product\") AS \"productSales\""
 
 	err := db.QueryRow(selectStatement).Scan(&revenue, &tax, &productSales)
 	if err != nil {

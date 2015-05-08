@@ -8,13 +8,14 @@ import (
 )
 
 type Transaction struct {
-	Id        int       `json:"id"`
-	AccountId int       `json:"accountId"`
-	Details   string    `json:"details"`
-	Amount    float32   `json:"amount"` // saved as US dollars
-	Date      time.Time `json:"date"`
-	Updated   int       `json:"updated"`
-	Created   int       `json:"created"`
+	Id              int       `json:"id"`
+	AccountTypeId   int       `json:"accountId"`
+	AccountHolderId int       `json:"accountHolderId"`
+	Details         string    `json:"details"`
+	Amount          float32   `json:"amount"` // saved as US dollars
+	Date            time.Time `json:"date"`
+	Updated         int       `json:"updated"`
+	Created         int       `json:"created"`
 }
 
 type TransactionViewable struct {
@@ -46,11 +47,11 @@ func (t Transaction) SaveTransaction() {
 		fmt.Print(e)
 	}
 
-	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	stmt, err := db.Prepare("INSERT INTO transactions (accountHolderId, AccountTypeId, details, amount, date, updated, created) values (?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
 	if err != nil {
 		fmt.Print(err)
 	}
-	res, err := stmt.Exec(t.AccountId, t.Details, t.Amount, t.Date)
+	res, err := stmt.Exec(t.AccountHolderId, t.AccountTypeId, t.Details, t.Amount, t.Date)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -83,8 +84,8 @@ func GetTransactions() TransactionViewables {
 		fmt.Print(e)
 	}
 
-	selectStatement := "SELECT t.id, t.accountId, t.details, t.amount, t.date, a.type AS accountType FROM transactions AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId"
+	selectStatement := "SELECT t.id, t.accountTypeId, t.AccountHolderId, t.details, t.amount, t.date, a.type AS accountType FROM transactions AS t "
+	selectStatement += "JOIN accountTypes AS a ON a.id = t.accountTypeId"
 
 	rows, err := db.Query(selectStatement)
 	if err != nil {
@@ -97,14 +98,15 @@ func GetTransactions() TransactionViewables {
 	for rows.Next() {
 
 		var (
-			id          int
-			accountId   int
-			details     string
-			amount      float32
-			accountType string
-			date        string
+			id              int
+			accountTypeId   int
+			accountHolderId int
+			details         string
+			amount          float32
+			accountType     string
+			date            string
 		)
-		var err = rows.Scan(&id, &accountId, &details, &amount, &date, &accountType)
+		var err = rows.Scan(&id, &accountTypeId, &accountHolderId, &details, &amount, &date, &accountType)
 
 		layout := "2006-01-02"
 
@@ -112,7 +114,7 @@ func GetTransactions() TransactionViewables {
 		if err != nil {
 			fmt.Println(err)
 		}
-		transaction := TransactionViewable{Transaction{Id: id, AccountId: accountId, Details: details, Amount: amount, Date: dateString}, accountType}
+		transaction := TransactionViewable{Transaction{Id: id, AccountTypeId: accountTypeId, AccountHolderId: accountHolderId, Details: details, Amount: amount, Date: dateString}, accountType}
 		results = append(results, transaction)
 		i++
 	}
@@ -133,18 +135,19 @@ func GetTransaction(transactionId int) Transaction {
 		fmt.Print(e)
 	}
 	var (
-		id        int
-		accountId int
-		details   string
-		amount    float32
-		date      time.Time
+		id              int
+		accountTypeId   int
+		accountHolderId int
+		details         string
+		amount          float32
+		date            time.Time
 	)
-	err := db.QueryRow("SELECT id, accountId, details, amount, date FROM transactions WHERE id = ?", transactionId).Scan(&id, &accountId, &details, &amount, &date)
+	err := db.QueryRow("SELECT id, accountTypeId, accountHolderId,  details, amount, date FROM transactions WHERE id = ?", transactionId).Scan(&id, &accountTypeId, &accountHolderId, &details, &amount, &date)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	transaction := Transaction{Id: id, AccountId: accountId, Details: details, Amount: amount, Date: date}
+	transaction := Transaction{Id: id, AccountTypeId: accountTypeId, AccountHolderId: accountHolderId, Details: details, Amount: amount, Date: date}
 
 	//	log.Println(transaction)
 	return transaction
@@ -214,9 +217,9 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 		fmt.Print(e)
 	}
 
-	selectStatement := "SELECT t.id, t.accountId, t.details, a.type AS accountType, t.amount, t.date "
+	selectStatement := "SELECT t.id, t.accountTypeId, t.accountHolderIdm t.details, a.type AS accountType, t.amount, t.date "
 	selectStatement += "FROM transactions AS t "
-	selectStatement += "JOIN accounts AS a ON a.id = t.accountId "
+	selectStatement += "JOIN accountTypes AS a ON a.id = t.accountTypeId "
 	selectStatement += "WHERE a.accountHolderId = ? "
 
 	rows, err := db.Query(selectStatement, accountHolderId)
@@ -230,14 +233,14 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 	for rows.Next() {
 
 		var (
-			id          int
-			accountId   int
-			accountType string
-			details     string
-			amount      float32
-			date        string
+			id              int
+			accountHolderId int
+			accountTypeId   int
+			details         string
+			amount          float32
+			date            string
 		)
-		var err = rows.Scan(&id, &accountId, &details, &accountType, &amount, &date)
+		var err = rows.Scan(&id, &details, &accountHolderId, &accountTypeId, &amount, &date)
 
 		layout := "2006-01-02"
 
@@ -245,8 +248,8 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 		if err != nil {
 			fmt.Println(err)
 		}
-		transaction := Transaction{Id: id, AccountId: accountId, Details: details, Amount: amount, Date: dateString}
-		transactionViewable := TransactionViewable{transaction, accountType}
+		transaction := Transaction{Id: id, AccountTypeId: accountTypeId, AccountHolderId: accountHolderId, Details: details, Amount: amount, Date: dateString}
+		transactionViewable := TransactionViewable{transaction, ""}
 		results = append(results, transactionViewable)
 		i++
 	}
@@ -255,36 +258,36 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 	return results
 }
 
+func saveTransactionByType(accountHolderId int, AccountType string, amount float32) {
+	//	db, e := myDb.setup()
+	//	defer db.Close()
 
-func saveTransactionByType(o.AccountHolderId int, type string, amount float32) {
-	db, e := myDb.setup()
-	defer db.Close()
+	//waiting til db is refactored from accounts to accountTypes
+	//	if e != nil {
+	//		fmt.Print(e)
+	//	}
 
-	if e != nil {
-		fmt.Print(e)
-	}
+	//	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	//	if err != nil {
+	//		fmt.Print(err)
+	//	}
+	//	res, err := stmt.Exec(t.accountTypeId, t.Details, t.Amount, t.Date)
+	//	if err != nil {
+	//		log.Fatal(err)
+	//	}
 
-	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
-	if err != nil {
-		fmt.Print(err)
-	}
-	res, err := stmt.Exec(t.AccountId, t.Details, t.Amount, t.Date)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		log.Fatal(err)
-	}
-	RowsAffected, err := res.RowsAffected()
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("RowsAffected", RowsAffected)
-	t.Id = int(lastId)
-	log.Println("transaction entered")
-	log.Println(t)
+	//	lastId, err := res.LastInsertId()
+	//	if err != nil {
+	//		log.Fatal(err)
+	//	}
+	//	RowsAffected, err := res.RowsAffected()
+	//	if err != nil {
+	//		log.Fatal(err)
+	//	}
+	//	log.Println("RowsAffected", RowsAffected)
+	//	t.Id = int(lastId)
+	//	log.Println("transaction entered")
+	//	log.Println(t)
 }
 
 //deleteTransaction(transaction_id int)

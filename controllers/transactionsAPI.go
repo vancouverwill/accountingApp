@@ -137,7 +137,7 @@ func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 	transaction = jsonToObject(response, request, transaction)
 	log.Println(transaction)
 
-	currency := models.GetCurrencyByAccountId(transaction.AccountId)
+	currency := models.GetCurrencyByAccountId(transaction.AccountTypeId)
 
 	log.Println("currency", currency)
 
