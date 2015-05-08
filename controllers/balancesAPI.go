@@ -10,9 +10,9 @@ import (
 )
 
 //
-// query paramters : AccountAccountHolderOrCompany & relatedToId
+// query paramters : AccountHolderOrCompany & relatedToId
 //
-// exp get balance of an account with id relatedToId : `curl -H "Content-Type: application/json" -dG "http://localhost:8080/balances/?AccountAccountHolderOrCompany=Account&relatedToId=18"`
+// exp get balance of an account with id relatedToId : `curl -H "Content-Type: application/json" -dG "http://localhost:8080/balances/?AccountHolderOrCompany=Account&relatedToId=18"`
 //
 // sample return json
 //
@@ -32,11 +32,11 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 		http.Error(response, fmt.Sprintf("error parsing url %v", err), 500)
 	}
 
-	var AccountAccountHolderOrCompany = request.FormValue("AccountAccountHolderOrCompany")
+	var AccountHolderOrCompany = request.FormValue("AccountHolderOrCompany")
 	var relatedToId = request.FormValue("relatedToId")
 
-	if AccountAccountHolderOrCompany != "Account" && AccountAccountHolderOrCompany != "AccountHolder" && AccountAccountHolderOrCompany != "Company" {
-		error := ResponseError{"invalid_field_value_type", ErrorDetails{"AccountAccountHolderOrCompany", "Account|AccountHolder|Company", AccountAccountHolderOrCompany}}
+	if AccountHolderOrCompany != "AccountHolder" && AccountHolderOrCompany != "Company" {
+		error := ResponseError{"invalid_field_value_type", ErrorDetails{"AccountHolderOrCompany", "Account|AccountHolder|Company", AccountHolderOrCompany}}
 		response.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(response).Encode(error); err != nil {
 			panic(err)
@@ -45,7 +45,8 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	if AccountAccountHolderOrCompany == "Account" || AccountAccountHolderOrCompany == "AccountHolder" {
+	if AccountHolderOrCompany == "AccountHolder" {
+		//		if AccountHolderOrCompany == "Account" || AccountHolderOrCompany == "AccountHolder" {
 		relatedToIdInt, err := strconv.Atoi(relatedToId)
 		log.Println("relatedToIdInt", relatedToIdInt)
 		if err != nil {
@@ -61,41 +62,41 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		if AccountAccountHolderOrCompany == "Account" {
-			paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceForAccountId(relatedToIdInt)
-			object := make(map[string]float32)
-			object["paymentBalance"] = paymentBalance
-			object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
-			object["productBalance"] = productBalance
-			object["balance"] = paymentBalance - productBalance
+		//		if AccountHolderOrCompany == "Account" {
+		//			paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceForAccountId(relatedToIdInt)
+		//			object := make(map[string]float32)
+		//			object["paymentBalance"] = paymentBalance
+		//			object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
+		//			object["productBalance"] = productBalance
+		//			object["balance"] = paymentBalance - productBalance
 
-			response.WriteHeader(http.StatusAccepted)
-			if err := json.NewEncoder(response).Encode(object); err != nil {
-				panic(err)
+		//			response.WriteHeader(http.StatusAccepted)
+		//			if err := json.NewEncoder(response).Encode(object); err != nil {
+		//				panic(err)
 
-			}
-			return
-		} else {
-			paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
-			object := make(map[string]float32)
-			object["paymentBalance"] = paymentBalance
-			object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
-			object["productBalance"] = productBalance
-			object["balance"] = paymentBalance - productBalance
+		//			}
+		//			return
+		//		} else {
+		paymentBalance, Tax, productBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
+		object := make(map[string]float32)
+		object["paymentBalance"] = paymentBalance
+		object["Tax"] = Tax
+		object["productBalance"] = productBalance
+		object["balance"] = paymentBalance - productBalance
 
-			response.WriteHeader(http.StatusAccepted)
-			if err := json.NewEncoder(response).Encode(object); err != nil {
-				panic(err)
+		response.WriteHeader(http.StatusAccepted)
+		if err := json.NewEncoder(response).Encode(object); err != nil {
+			panic(err)
 
-			}
-			return
 		}
+		return
+		//		}
 	}
 
-	paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceAcrossCompany()
+	paymentBalance, Tax, productBalance := models.GetBalanceAcrossCompany()
 	object := make(map[string]float32)
 	object["paymentBalance"] = paymentBalance
-	object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
+	object["Tax"] = Tax
 	object["productBalance"] = productBalance
 	object["balance"] = paymentBalance - productBalance
 
