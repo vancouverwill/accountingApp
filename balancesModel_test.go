@@ -11,6 +11,8 @@ func TestGetBalancesByCompany(t *testing.T) {
 
 	//	var ok bool
 	//	var temp float32
+
+	t.Log("revenue", revenue, "tax", tax, "productSales", productSales)
 	if revenue+tax+productSales != 0 {
 		t.Error("TestGetBalancesByCompany() did not work as expected. The totals did not come to zero")
 	}

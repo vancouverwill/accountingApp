@@ -33,3 +33,28 @@ func GetTaxRateByName(name string) TaxRate {
 
 	return taxRateObject
 }
+
+func GetTaxRateByAccountId(accountId int) TaxRate {
+	log.Println("GetTaxRateByAccountId")
+	db, e := myDb.setup()
+	defer db.Close()
+	if e != nil {
+		fmt.Print(e)
+	}
+	var (
+		id      int
+		name    string
+		taxRate float32
+	)
+	selectStatement := "SELECT t.id, t.name AS name, t.taxRate FROM taxRates AS t "
+	selectStatement += " JOIN accountHolders AS ah ON ah.taxRateId = t.id"
+	selectStatement += "WHERE t.id = ?"
+	err := db.QueryRow(selectStatement, accountId).Scan(&id, &taxRate, &name)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	taxRateObject := TaxRate{Id: id, Name: name, TaxRate: taxRate}
+
+	return taxRateObject
+}

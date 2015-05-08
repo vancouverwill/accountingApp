@@ -102,7 +102,7 @@ func GetBalanceAcrossCompany() (float32, float32, float32) {
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE at.type = \"payment\"), "
+	selectStatement += "WHERE at.type = \"revenue\"), "
 
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"tax\" "
 	selectStatement += "FROM `transactions` AS t "

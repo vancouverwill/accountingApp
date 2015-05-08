@@ -269,6 +269,7 @@ func SaveTransactionByType(accountHolderId int, AccountType string, amount float
 	stmt, err := db.Prepare("INSERT INTO transactions (accountHolderId, accountTypeId, details, amount, date, updated, created) values (?, (SELECT id FROM accountTypes WHERE type = ?), ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
 	if err != nil {
 		fmt.Print(err)
+		log.Println(err)
 	}
 	res, err := stmt.Exec(accountHolderId, AccountType, details, amount, time.Now())
 	if err != nil {
