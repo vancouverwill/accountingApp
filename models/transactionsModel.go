@@ -22,20 +22,20 @@ type TransactionViewable struct {
 	AccountType string `json:"paymentOrProduct"`
 }
 
-type TransactionModel struct {
-}
+//type TransactionModel struct {
+//}
 
 type TransactionViewables []TransactionViewable
 type Transactions []Transaction
 
-var MyTransaction = TransactionModel{}
+//var MyTransaction = TransactionModel{}
 
 /**
 *
 * amount is recorded as US dollars
 *
 **/
-func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
+func (t Transaction) SaveTransaction() {
 	log.Println("RepoCreateTransaction")
 	log.Println(t)
 
@@ -52,7 +52,7 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 
 	amountInUS := t.Amount * currency.ExchangeRate
 
-	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, paymentOrProduct, amount, date, updated, created) values (?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
+	stmt, err := db.Prepare("INSERT INTO transactions (accountId, details, amount, date, updated, created) values (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())")
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -73,7 +73,6 @@ func (tm TransactionModel) SaveTransaction(t Transaction) Transaction {
 	t.Id = int(lastId)
 	log.Println("transaction entered")
 	log.Println(t)
-	return t
 }
 
 /**
