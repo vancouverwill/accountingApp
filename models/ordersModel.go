@@ -17,11 +17,16 @@ type Order struct {
 	Amount     float32
 }
 
-func (o *Order) addItem(name string, amount float32) {
+func (o *Order) AddItem(name string, amount float32) {
 	o.Name = name
 	o.Amount = amount
 }
 
+/**
+*
+* When we take money out of the product account
+*
+**/
 func (o *Order) ProcessProduct() {
 	amount := -o.Amount
 	SaveTransactionByType(o.AccountHolderId, "product", amount, o.Name)
@@ -29,17 +34,18 @@ func (o *Order) ProcessProduct() {
 
 func (o *Order) ProcessPayment() {
 
-	currency := GetCurrencyByAccountId(o.AccountHolderId)
+	currency := GetCurrencyByAccountHolderId(o.AccountHolderId)
 
-	log.Println("currency", currency)
+	log.Println("ProcessRevene currency", currency)
+	log.Println("ProcessPayment", o.AccountHolderId)
 
 	amountInUS := o.Amount * currency.ExchangeRate
 
-	taxRate := GetTaxRateByAccountId(o.AccountHolderId)
+	taxRate := GetTaxRateByAccountHolderId(o.AccountHolderId)
 
-	revenueMade := amountInUS * (1 - taxRate.TaxRate)
+	revenueMade := amountInUS
 	taxPayable := amountInUS * (taxRate.TaxRate)
 
-	SaveTransactionByType(o.AccountHolderId, "payment", revenueMade, o.Name+" Payment")
+	SaveTransactionByType(o.AccountHolderId, "revenue", revenueMade, o.Name+" revenue")
 	SaveTransactionByType(o.AccountHolderId, "tax", taxPayable, o.Name+" tax")
 }

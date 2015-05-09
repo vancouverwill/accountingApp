@@ -81,6 +81,8 @@ func GetBalanceForAccountholderId(accountHolderId int) (float32, float32, float3
 		fmt.Print(err)
 	}
 
+	log.Println()
+
 	return revenue, tax, productSales
 }
 

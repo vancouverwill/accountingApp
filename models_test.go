@@ -24,11 +24,11 @@ func TestGetAccountByAccountName(t *testing.T) {
 	t.Log("testGetAccountByAccountName successful")
 }*/
 
-/** test transactions return expected no of transactions for an accountID
+/** test transactions return expected no of transactions for an accountHolderId
 *
-* 1 - get transactions for accountId
+* 1 - get transactions for accountHolderId
 * 2 - record no of transactions at start
-* 3 - add new 5 transactions for accountID
+* 3 - add new 5 transactions for accountHolderId
 * 4 - verify accounts after - accounts before is equal to five
 *
 **/

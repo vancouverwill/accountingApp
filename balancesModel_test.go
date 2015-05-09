@@ -29,4 +29,11 @@ func TestCreateUserAddAnOrderThenVerifyBalanceIsZero(t *testing.T) {
 	t.Log("accountHolder", accountHolder)
 	order := accountHolder.NewOrder()
 	t.Log("order", order)
+
+	revenue, tax, productSales := models.GetBalanceForAccountholderId(accountHolder.Id)
+
+	if revenue != 0 || tax != 0 || productSales != 0 {
+		t.Error("TestCreateUserAddAnOrderThenVerifyBalanceIsZero() did not work as expected.")
+		t.Error("The new user did not have zero balances", revenue, tax, productSales)
+	}
 }

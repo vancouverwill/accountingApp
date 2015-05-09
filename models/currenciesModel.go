@@ -26,7 +26,7 @@ type Currency struct {
 
 // deleteCurrency()
 
-func GetCurrencyByAccountId(accountId int) Currency {
+func GetCurrencyByAccountHolderId(accountHolderId int) Currency {
 	db, e := myDb.setup()
 	defer db.Close()
 	if e != nil {
@@ -40,10 +40,9 @@ func GetCurrencyByAccountId(accountId int) Currency {
 	selectStatement := "SELECT c.id, c.name, c.exchangeRate "
 	selectStatement += "FROM currencies AS c "
 	selectStatement += "JOIN accountHolders AS ah ON ah.currencyId = c.id "
-	selectStatement += "JOIN accounts AS a ON a.accountHolderId = ah.id "
-	selectStatement += "WHERE a.id = ?"
+	selectStatement += "WHERE ah.id = ?"
 
-	err := db.QueryRow(selectStatement, accountId).Scan(&id, &name, &exchangeRate)
+	err := db.QueryRow(selectStatement, accountHolderId).Scan(&id, &name, &exchangeRate)
 	if err != nil {
 		fmt.Print(err)
 	}

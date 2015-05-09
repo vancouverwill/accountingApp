@@ -9,7 +9,7 @@ import (
 
 type Transaction struct {
 	Id              int       `json:"id"`
-	AccountTypeId   int       `json:"accountId"`
+	AccountTypeId   int       `json:"accountTypeId"`
 	AccountHolderId int       `json:"accountHolderId"`
 	Details         string    `json:"details"`
 	Amount          float32   `json:"amount"` // saved as US dollars
@@ -259,6 +259,11 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 }
 
 func SaveTransactionByType(accountHolderId int, AccountType string, amount float32, details string) {
+
+	if AccountType != "product" && AccountType != "revenue" && AccountType != "tax" {
+		panic(fmt.Sprintf("AccountType is not valid %v", AccountType))
+		//		return fmt.Errorf("AccountType is not valid")
+	}
 	db, e := myDb.setup()
 	defer db.Close()
 
