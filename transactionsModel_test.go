@@ -37,6 +37,7 @@ func TestCreateOrder(t *testing.T) {
 	log.Println(accountHolder)
 	order := accountHolder.NewOrder()
 	order.AddItem("Sony Playstation 3", 799)
-	order.ProcessPayment()
-	order.ProcessRevenue()
+	order.PrepareRevenue()
+	order.PreparePayment()
+	order.FinalizeOrder()
 }

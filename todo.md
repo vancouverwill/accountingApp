@@ -1,5 +1,5 @@
 
-- tax is not taken off of revenue like in UK but added to revenue
+- test for adding tranasaction as POST API
 - instead of having a product transaction possibly call it user acccount
 
 
