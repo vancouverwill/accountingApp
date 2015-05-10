@@ -10,7 +10,7 @@ import (
 	t.Log("TestCreateTransaction")
 
 	// manually add in dual accounting just to test the save transaction is working. the actual caculations of how it should be split up are handled by the order model
-	models.SaveTransactionByType(5, "product", -650, "test product sale")
+	models.SaveTransactionByType(5, "payment", -650, "test product sale")
 	models.SaveTransactionByType(5, "tax", 50, "test tax")
 	models.SaveTransactionByType(5, "revenue", 600, "test revenue")
 
@@ -37,6 +37,6 @@ func TestCreateOrder(t *testing.T) {
 	log.Println(accountHolder)
 	order := accountHolder.NewOrder()
 	order.AddItem("Sony Playstation 3", 799)
-	order.ProcessProduct()
 	order.ProcessPayment()
+	order.ProcessRevenue()
 }

@@ -113,7 +113,7 @@ func TestTransactionsIndex(t *testing.T) {
 *
 * test POST transactions from the company
 *
-* working on accepting JSON body
+* todo working on accepting JSON body as part http.NewRequest
 *
 **/
 /*func TestTransactionsCreate(t *testing.T) {

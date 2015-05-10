@@ -16,7 +16,7 @@ import (
 //
 // sample return json
 //
-// {"productBalance" : total sales til now,
+// {"revenueBalance" : total sales til now,
 //   "paymentBalance" : total payments til now,
 //    "paymentBalanceAfterTax" : "total payments minus tax",
 //     "balance" : "payments - sales"}
@@ -62,27 +62,12 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		//		if AccountHolderOrCompany == "Account" {
-		//			paymentBalance, paymentBalanceAfterTax, productBalance := models.GetBalanceForAccountId(relatedToIdInt)
-		//			object := make(map[string]float32)
-		//			object["paymentBalance"] = paymentBalance
-		//			object["paymentBalanceAfterTax"] = paymentBalanceAfterTax
-		//			object["productBalance"] = productBalance
-		//			object["balance"] = paymentBalance - productBalance
-
-		//			response.WriteHeader(http.StatusAccepted)
-		//			if err := json.NewEncoder(response).Encode(object); err != nil {
-		//				panic(err)
-
-		//			}
-		//			return
-		//		} else {
-		paymentBalance, Tax, productBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
+		revenueBalance, Tax, paymentBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
 		object := make(map[string]float32)
-		object["paymentBalance"] = paymentBalance
+		object["revenueBalance"] = revenueBalance
 		object["Tax"] = Tax
-		object["productBalance"] = productBalance
-		object["balance"] = paymentBalance - productBalance
+		object["paymentBalance"] = paymentBalance
+		object["balance"] = revenueBalance - paymentBalance
 
 		response.WriteHeader(http.StatusAccepted)
 		if err := json.NewEncoder(response).Encode(object); err != nil {
@@ -90,15 +75,14 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 
 		}
 		return
-		//		}
 	}
 
-	paymentBalance, Tax, productBalance := models.GetBalanceAcrossCompany()
+	revenueBalance, Tax, paymentBalance := models.GetBalanceAcrossCompany()
 	object := make(map[string]float32)
-	object["paymentBalance"] = paymentBalance
+	object["revenueBalance"] = revenueBalance
 	object["Tax"] = Tax
-	object["productBalance"] = productBalance
-	object["balance"] = paymentBalance - productBalance
+	object["paymentBalance"] = paymentBalance
+	object["balance"] = revenueBalance - paymentBalance
 
 	response.WriteHeader(http.StatusAccepted)
 	if err := json.NewEncoder(response).Encode(object); err != nil {

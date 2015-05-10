@@ -16,7 +16,7 @@ SET ah.currencyId = a.currencyId, ah.taxRateId = a.taxRateId;
 
 
 
-ALTER TABLE accounts ADD `type` enum('tax','revenue','product') DEFAULT 'product';
+ALTER TABLE accounts ADD `type` enum('tax','revenue','payment') DEFAULT 'payment';
 
 ALTER TABLE accounts DROP COLUMN currencyId;
 ALTER TABLE accounts DROP COLUMN taxRateId;
@@ -42,10 +42,10 @@ from accountHolders;
 -- INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "tax" AS type
 from accountHolders;
 
--- INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "product" AS type
+-- INSERT into accounts select null AS id, id AS accountHolderId, UNIX_TIMESTAMP() AS updated, UNIX_TIMESTAMP() AS created, "payment" AS type
 from accountHolders;
 
-INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "product") ;
+INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "payment") ;
 INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "revenue") ;
 INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "tax") ;
 

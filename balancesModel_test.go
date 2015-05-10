@@ -7,13 +7,13 @@ import (
 
 func TestGetBalancesByCompany(t *testing.T) {
 	t.Log("TestGetBalancesByCompany")
-	revenue, tax, productSales := models.GetBalanceAcrossCompany()
+	revenue, tax, payment := models.GetBalanceAcrossCompany()
 
 	//	var ok bool
 	//	var temp float32
 
-	t.Log("revenue", revenue, "tax", tax, "productSales", productSales)
-	if revenue+tax+productSales != 0 {
+	t.Log("revenue", revenue, "tax", tax, "payment", payment)
+	if revenue+tax+payment != 0 {
 		t.Error("TestGetBalancesByCompany() did not work as expected. The totals did not come to zero")
 	}
 
@@ -30,10 +30,10 @@ func TestCreateUserAddAnOrderThenVerifyBalanceIsZero(t *testing.T) {
 	order := accountHolder.NewOrder()
 	t.Log("order", order)
 
-	revenue, tax, productSales := models.GetBalanceForAccountholderId(accountHolder.Id)
+	revenue, tax, payment := models.GetBalanceForAccountholderId(accountHolder.Id)
 
-	if revenue != 0 || tax != 0 || productSales != 0 {
+	if revenue != 0 || tax != 0 || payment != 0 {
 		t.Error("TestCreateUserAddAnOrderThenVerifyBalanceIsZero() did not work as expected.")
-		t.Error("The new user did not have zero balances", revenue, tax, productSales)
+		t.Error("The overall did not add to zero balances", revenue, tax, payment)
 	}
 }

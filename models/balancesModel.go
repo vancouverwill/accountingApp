@@ -7,44 +7,6 @@ import (
 )
 
 /**
-* get current balances for a single account
-**/
-/*func GetBalanceForAccountId(accountId int) (float32, float32, float32) {
-	log.Println("getBalanceForAccountId", accountId)
-	db, e := myDb.setup()
-	defer db.Close()
-	if e != nil {
-		fmt.Print(e)
-	}
-	var paymentBalance float32
-	var paymentBalanceAfterTax float32
-	var productBalance float32
-	selectStatement := "SELECT"
-	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"paymentBalance\" "
-	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accountTypes AS a ON a.id = t.accountTypeId "
-	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE t.accountTypeId =  ? AND  paymentOrProduct = \"payment\"), "
-
-	selectStatement += "(SELECT IFNULL(sum(amount - (amount * tr.taxRate)), 0.00) AS \"paymentBalanceAfterTax\" "
-	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
-	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
-	selectStatement += "WHERE t.accountTypeId =  ? AND  paymentOrProduct = \"payment\"), "
-
-	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"accountAmount\" "
-	selectStatement += "FROM `transactions` AS t "
-	selectStatement += "WHERE accountId =  ? AND  paymentOrProduct = \"product\") AS \"productBalance\""
-
-	err := db.QueryRow(selectStatement, accountId, accountId, accountId).Scan(&paymentBalance, &paymentBalanceAfterTax, &productBalance)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	return paymentBalance, paymentBalanceAfterTax, productBalance
-}*/
-
-/**
 * get current balances combined for account holder
 **/
 func GetBalanceForAccountholderId(accountHolderId int) (float32, float32, float32) {
@@ -56,7 +18,7 @@ func GetBalanceForAccountholderId(accountHolderId int) (float32, float32, float3
 	}
 	var tax float32
 	var revenue float32
-	var productSales float32
+	var payment float32
 	selectStatement := "SELECT"
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"revenue\" "
 	selectStatement += "FROM `transactions` AS t "
@@ -71,19 +33,19 @@ func GetBalanceForAccountholderId(accountHolderId int) (float32, float32, float3
 	//	selectStatement += "JOIN taxRates AS tr ON a.`taxRateId` = tr.id "
 	selectStatement += "WHERE t.accountHolderId =  ? AND  at.type = \"tax\"), "
 
-	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"productSales\" "
+	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"payment\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
-	selectStatement += "WHERE t.accountHolderId =  ? AND  at.type = \"product\") AS \"productSales\""
+	selectStatement += "WHERE t.accountHolderId =  ? AND  at.type = \"payment\") AS \"payment\""
 
-	err := db.QueryRow(selectStatement, accountHolderId, accountHolderId, accountHolderId).Scan(&revenue, &tax, &productSales)
+	err := db.QueryRow(selectStatement, accountHolderId, accountHolderId, accountHolderId).Scan(&revenue, &tax, &payment)
 	if err != nil {
 		fmt.Print(err)
 	}
 
 	log.Println()
 
-	return revenue, tax, productSales
+	return revenue, tax, payment
 }
 
 /**
@@ -98,7 +60,7 @@ func GetBalanceAcrossCompany() (float32, float32, float32) {
 	}
 	var tax float32
 	var revenue float32
-	var productSales float32
+	var payment float32
 	selectStatement := "SELECT"
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"paymentBalance\" "
 	selectStatement += "FROM `transactions` AS t "
@@ -115,12 +77,12 @@ func GetBalanceAcrossCompany() (float32, float32, float32) {
 	selectStatement += "(SELECT IFNULL(sum(amount), 0.00) AS \"accountAmount\" "
 	selectStatement += "FROM `transactions` AS t "
 	selectStatement += "JOIN accountTypes AS at ON at.id = t.accountTypeId "
-	selectStatement += "WHERE at.type = \"product\") AS \"productSales\""
+	selectStatement += "WHERE at.type = \"payment\") AS \"payment\""
 
-	err := db.QueryRow(selectStatement).Scan(&revenue, &tax, &productSales)
+	err := db.QueryRow(selectStatement).Scan(&revenue, &tax, &payment)
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	return revenue, tax, productSales
+	return revenue, tax, payment
 }

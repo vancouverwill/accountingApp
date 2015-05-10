@@ -9,12 +9,9 @@ type Order struct {
 	Name            string
 	TaxRate         float32
 	AccountHolderId int
-	//	RevenueAccountId int
-	//	TaxAccountId int
-	//	ProductSalesAccountId int
-	CurrencyId int
-	TaxRateId  int
-	Amount     float32
+	CurrencyId      int
+	TaxRateId       int
+	Amount          float32
 }
 
 func (o *Order) AddItem(name string, amount float32) {
@@ -24,15 +21,15 @@ func (o *Order) AddItem(name string, amount float32) {
 
 /**
 *
-* When we take money out of the product account
+* When we take money out of the payment account
 *
 **/
-func (o *Order) ProcessProduct() {
+func (o *Order) ProcessPayment() {
 	amount := -o.Amount
-	SaveTransactionByType(o.AccountHolderId, "product", amount, o.Name)
+	SaveTransactionByType(o.AccountHolderId, "payment", amount, o.Name)
 }
 
-func (o *Order) ProcessPayment() {
+func (o *Order) ProcessRevenue() {
 
 	currency := GetCurrencyByAccountHolderId(o.AccountHolderId)
 

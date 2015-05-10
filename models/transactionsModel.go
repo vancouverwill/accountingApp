@@ -20,7 +20,7 @@ type Transaction struct {
 
 type TransactionViewable struct {
 	Transaction
-	AccountType string `json:"paymentOrProduct"`
+	AccountType string `json:"accountType"`
 }
 
 //type TransactionModel struct {
@@ -155,55 +155,6 @@ func GetTransaction(transactionId int) Transaction {
 
 /**
 *
-* get transaction by account id
-*
-**/
-/*func GetTransactionsForAccountId(accountId int) Transactions {
-	log.Println("GetTransactionsForAccountId")
-	db, e := myDb.setup()
-	defer db.Close()
-
-	if e != nil {
-		fmt.Print(e)
-	}
-
-	rows, err := db.Query("SELECT id, accountId, details, paymentOrProduct, amount, date FROM transactions WHERE accountId = ?", accountId)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	var results = make([]Transaction, 0)
-
-	i := 0
-	for rows.Next() {
-
-		var (
-			id               int
-			accountId        int
-			details          string
-			paymentOrProduct string
-			amount           float32
-			date             string
-		)
-		var err = rows.Scan(&id, &accountId, &details, &paymentOrProduct, &amount, &date)
-
-		layout := "2006-01-02"
-
-		dateString, err := time.Parse(layout, date)
-		if err != nil {
-			fmt.Println(err)
-		}
-		transaction := Transaction{Id: id, AccountId: accountId, Details: details, PaymentOrProduct: paymentOrProduct, Amount: amount, Date: dateString}
-		results = append(results, transaction)
-		i++
-	}
-	log.Println(results)
-
-	return results
-}*/
-
-/**
-*
 * get transaction by account holde id
 *
 **/
@@ -260,7 +211,7 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 
 func SaveTransactionByType(accountHolderId int, AccountType string, amount float32, details string) {
 
-	if AccountType != "product" && AccountType != "revenue" && AccountType != "tax" {
+	if AccountType != "payment" && AccountType != "revenue" && AccountType != "tax" {
 		panic(fmt.Sprintf("AccountType is not valid %v", AccountType))
 		//		return fmt.Errorf("AccountType is not valid")
 	}
