@@ -8,7 +8,7 @@ JOIN accounts AS a ON a.accountHolderId = ah.id
 SET ah.currencyId = a.currencyId, ah.taxRateId = a.taxRateId;
 
 
-ALTER TABLE accounts ADD `type` enum('tax','revenue','payment') DEFAULT 'payment';
+ALTER TABLE accounts ADD `type` enum('tax','revenue','payment','commission') DEFAULT 'payment';
 
 ALTER TABLE accounts DROP COLUMN currencyId;
 ALTER TABLE accounts DROP COLUMN taxRateId;
@@ -27,6 +27,7 @@ DELETE  FROM accounts;
 INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "payment") ;
 INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "revenue") ;
 INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "tax") ;
+INSERT into accounts (id, updated, created, type)  VALUES (null, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), "commission") ;
 
 ALTER TABLE accounts DROP COLUMN accountHolderId;
 

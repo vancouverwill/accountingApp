@@ -211,7 +211,7 @@ func GetTransactionsForAccountHolderId(accountHolderId int) TransactionViewables
 
 func SaveTransactionByType(accountHolderId int, AccountType string, amount float32, details string) {
 
-	if AccountType != "payment" && AccountType != "revenue" && AccountType != "tax" {
+	if AccountType != "payment" && AccountType != "revenue" && AccountType != "tax" && AccountType != "commission" {
 		panic(fmt.Sprintf("AccountType is not valid %v", AccountType))
 		//		return fmt.Errorf("AccountType is not valid")
 	}

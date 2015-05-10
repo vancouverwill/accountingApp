@@ -10,8 +10,10 @@ type Order struct {
 	CurrencyId      int
 	TaxRateId       int
 	Amount          float32
+	AmountInUs      float32
 	RevenueMadeInUs float32
 	TaxPayable      float32
+	ComissionPaid   float32
 	PaymentPaid     float32
 }
 
@@ -21,12 +23,16 @@ func (o *Order) AddItem(name string, amount float32) {
 }
 
 func (o *Order) PrepareRevenue() {
-
+	var comissionRate float32 = 0.1
 	currency := GetCurrencyByAccountHolderId(o.AccountHolderId)
-	o.RevenueMadeInUs = o.Amount * currency.ExchangeRate
+
+	o.AmountInUs = o.Amount * currency.ExchangeRate
+
+	o.ComissionPaid = o.AmountInUs * comissionRate
+	o.RevenueMadeInUs = o.AmountInUs - o.ComissionPaid
 
 	taxRate := GetTaxRateByAccountHolderId(o.AccountHolderId)
-	o.TaxPayable = o.RevenueMadeInUs * (taxRate.TaxRate)
+	o.TaxPayable = o.AmountInUs * (taxRate.TaxRate)
 }
 
 /**
@@ -35,11 +41,12 @@ func (o *Order) PrepareRevenue() {
 *
 **/
 func (o *Order) PreparePayment() {
-	o.PaymentPaid = -o.Amount - o.TaxPayable
+	o.PaymentPaid = -o.AmountInUs - o.TaxPayable
 }
 
 func (o *Order) FinalizeOrder() {
 	SaveTransactionByType(o.AccountHolderId, "revenue", o.RevenueMadeInUs, o.Name+" revenue")
 	SaveTransactionByType(o.AccountHolderId, "tax", o.TaxPayable, o.Name+" tax")
-	SaveTransactionByType(o.AccountHolderId, "payment", o.PaymentPaid, o.Name)
+	SaveTransactionByType(o.AccountHolderId, "commission", o.ComissionPaid, o.Name+" commission")
+	SaveTransactionByType(o.AccountHolderId, "payment", o.PaymentPaid, o.Name+" payment")
 }

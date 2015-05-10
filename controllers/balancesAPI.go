@@ -62,11 +62,12 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		revenueBalance, Tax, paymentBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
+		revenueBalance, Tax, paymentBalance, commissionBalance := models.GetBalanceForAccountholderId(relatedToIdInt)
 		object := make(map[string]float32)
 		object["revenueBalance"] = revenueBalance
 		object["Tax"] = Tax
 		object["paymentBalance"] = paymentBalance
+		object["commissionBalance"] = commissionBalance
 		object["balance"] = revenueBalance - paymentBalance
 
 		response.WriteHeader(http.StatusAccepted)
@@ -77,11 +78,12 @@ func BalancesIndex(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	revenueBalance, Tax, paymentBalance := models.GetBalanceAcrossCompany()
+	revenueBalance, Tax, paymentBalance, commissionBalance := models.GetBalanceAcrossCompany()
 	object := make(map[string]float32)
 	object["revenueBalance"] = revenueBalance
 	object["Tax"] = Tax
 	object["paymentBalance"] = paymentBalance
+	object["commissionBalance"] = commissionBalance
 	object["balance"] = revenueBalance - paymentBalance
 
 	response.WriteHeader(http.StatusAccepted)
