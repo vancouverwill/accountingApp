@@ -33,7 +33,6 @@ ALTER TABLE accounts DROP COLUMN accountHolderId;
 
 rename Table accounts TO accountTypes;
 
-
 ALTER TABLE transactions ADD `accountTypeId` int not null;
 
 ALTER TABLE transactions ADD `accountHolderId` int not null;

@@ -23,13 +23,8 @@ type TransactionViewable struct {
 	AccountType string `json:"accountType"`
 }
 
-//type TransactionModel struct {
-//}
-
 type TransactionViewables []TransactionViewable
 type Transactions []Transaction
-
-//var MyTransaction = TransactionModel{}
 
 /**
 *
@@ -118,7 +113,6 @@ func GetTransactions() TransactionViewables {
 		results = append(results, transaction)
 		i++
 	}
-	//	log.Println(results)
 
 	return results
 }
@@ -149,7 +143,6 @@ func GetTransaction(transactionId int) Transaction {
 
 	transaction := Transaction{Id: id, AccountTypeId: accountTypeId, AccountHolderId: accountHolderId, Details: details, Amount: amount, Date: date}
 
-	//	log.Println(transaction)
 	return transaction
 }
 
@@ -213,7 +206,6 @@ func SaveTransactionByType(accountHolderId int, AccountType string, amount float
 
 	if AccountType != "payment" && AccountType != "revenue" && AccountType != "tax" && AccountType != "commission" {
 		panic(fmt.Sprintf("AccountType is not valid %v", AccountType))
-		//		return fmt.Errorf("AccountType is not valid")
 	}
 	db, e := myDb.setup()
 	defer db.Close()
@@ -241,7 +233,6 @@ func SaveTransactionByType(accountHolderId int, AccountType string, amount float
 		log.Fatal(err)
 	}
 	log.Println("RowsAffected", RowsAffected)
-	//	t.Id = int(lastId)
 	log.Println("transaction entered", lastId)
 }
 

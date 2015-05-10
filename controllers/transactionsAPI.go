@@ -65,17 +65,6 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		//		if AccountHolderOrCompany == "Account" {
-		//			transactions := models.GetTransactionsForAccountId(relatedToIdInt)
-
-		//			log.Println("GetTransactionsForAccountId", transactions)
-
-		//			response.WriteHeader(http.StatusAccepted)
-		//			if err := json.NewEncoder(response).Encode(transactions); err != nil {
-		//				panic(err)
-		//			}
-		//			return
-		//		} else {
 		transactions := models.GetTransactionsForAccountHolderId(relatedToIdInt)
 
 		response.WriteHeader(http.StatusAccepted)
@@ -83,7 +72,6 @@ func TransactionsIndex(response http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 		return
-		//		}
 	}
 
 	transactions := models.GetTransactions()
