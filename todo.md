@@ -1,6 +1,7 @@
 
+- test run schema 1 and 2
+- add a comission accountType
 - test for adding tranasaction as POST API
-- instead of having a product transaction possibly call it user acccount
 
 
 - GET, POST, PUT, DELETE accounts, accountHolder, currencies and taxrates

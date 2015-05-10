@@ -9,14 +9,10 @@ func TestGetBalancesByCompany(t *testing.T) {
 	t.Log("TestGetBalancesByCompany")
 	revenue, tax, payment := models.GetBalanceAcrossCompany()
 
-	//	var ok bool
-	//	var temp float32
-
 	t.Log("revenue", revenue, "tax", tax, "payment", payment)
 	if revenue+tax+payment != 0 {
 		t.Error("TestGetBalancesByCompany() did not work as expected. The totals did not come to zero")
 	}
-
 	t.Log("testGetAccountByAccountName successful")
 }
 

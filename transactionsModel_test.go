@@ -40,4 +40,5 @@ func TestCreateOrder(t *testing.T) {
 	order.PrepareRevenue()
 	order.PreparePayment()
 	order.FinalizeOrder()
+
 }
