@@ -123,17 +123,30 @@ func TransactionsCreate(response http.ResponseWriter, request *http.Request) {
 	var transaction models.Transaction
 
 	transaction = jsonToObject(response, request, transaction)
-	log.Println(transaction)
 
-	currency := models.GetCurrencyByAccountHolderId(transaction.AccountHolderId)
+	accountHolder := models.GetAccountHolderById(transaction.AccountHolderId)
+	log.Println(transaction.AccountHolderId)
+	log.Println(accountHolder)
 
-	log.Println("currency", currency)
+	order := accountHolder.NewOrder()
+	order.AddItem(transaction.Details, transaction.Amount)
+	order.PrepareRevenue()
+	order.PreparePayment()
+	order.FinalizeOrder()
 
-	amountInUS := transaction.Amount * currency.ExchangeRate
+	//	log.Println(order)
+	//	log.Fatal("transaction", transaction.Amount, transaction)
 
-	transaction.Amount = amountInUS
+	//	currency := models.GetCurrencyByAccountHolderId(transaction.AccountHolderId)
 
-	transaction.SaveTransaction()
+	//	log.Println("currency", currency)
+
+	//	amountInUS := transaction.Amount * currency.ExchangeRate
+
+	//	transaction.Amount = amountInUS
+
+	//	transaction.SaveTransaction()
+
 	response.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	response.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(response).Encode(transaction); err != nil {

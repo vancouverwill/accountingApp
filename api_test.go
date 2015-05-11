@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/vancouverwill/accountingApp/controllers"
+	"github.com/vancouverwill/accountingApp/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestIndex(t *testing.T) {
@@ -116,16 +120,19 @@ func TestTransactionsIndex(t *testing.T) {
 * todo working on accepting JSON body as part http.NewRequest
 *
 **/
-/*func TestTransactionsCreate(t *testing.T) {
+func TestTransactionsCreate(t *testing.T) {
+	t.Log("TestTransactionsCreate")
+
+	accountHolder := models.PrepareAccountForTesting("James Dean", "Developer")
 
 	var transaction models.Transaction
-	transaction = models.Transaction{AccountId: 9, Details: "buying lots of products AGAIN", Amount: 201, Date: "2015-01-19T00:00:00Z", Updated: 0, Created: 0}
+	transaction = models.Transaction{AccountHolderId: accountHolder.Id, Details: "product brought by API", Amount: 200, Date: time.Now(), Updated: 0, Created: 0}
 
 	b, err := json.Marshal(transaction)
 	if err != nil {
 		t.Error("error:", err)
 	}
-	req, err := http.NewRequest("POST", "http://localhost:8080/transactions/", bytes.NewBufferString(b))
+	req, err := http.NewRequest("POST", "http://localhost:8080/transactions/", bytes.NewBufferString(string(b)))
 	if err != nil {
 		t.Error("index() did not work as expected.")
 		t.Log(err)
@@ -134,9 +141,9 @@ func TestTransactionsIndex(t *testing.T) {
 	w := httptest.NewRecorder()
 	controllers.TransactionsCreate(w, req)
 
-	if w.Code != 200 && w.Code != 202 {
+	if w.Code != 200 && w.Code != 201 {
 		t.Error("TransactionsIndex() did not work as expected. the status was not ", http.StatusOK, ", it was ", w.Code)
 	}
 
 	t.Log("status:", w.Code, "body:", w.Body.String())
-}*/
+}

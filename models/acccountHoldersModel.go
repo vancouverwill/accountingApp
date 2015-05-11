@@ -130,3 +130,38 @@ func GetAccountHolderByName(accountName string) AccountHolder {
 	log.Println(accountHolder)
 	return accountHolder
 }
+
+func GetAccountHolderById(accountHolderId int) AccountHolder {
+	db, e := myDb.setup()
+	defer db.Close()
+	if e != nil {
+		fmt.Print(e)
+	}
+	var (
+		id         int
+		name       string
+		jobTitle   string
+		currencyId int
+		taxRateId  int
+	)
+	err := db.QueryRow("SELECT id, name, jobTitle, currencyId, taxRateId FROM accountHolders WHERE id = ?", accountHolderId).Scan(&id, &name, &jobTitle, &currencyId, &taxRateId)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	log.Println("getAccountByName", id)
+
+	accountHolder := AccountHolder{Id: id, Name: name, JobTitle: jobTitle, CurrencyId: currencyId, TaxRateId: taxRateId}
+
+	log.Println(accountHolder)
+	return accountHolder
+}
+
+func PrepareAccountForTesting(name string, job string) AccountHolder {
+	var accountHolder AccountHolder = CreateAccountHolder("Issac Newton", "Engineer")
+	accountHolder.SetAccountHolderCurrency("US DOLLAR")
+	accountHolder.SetAccountHolderTaxRate("US Tax")
+	accountHolder.Save()
+
+	return accountHolder
+}

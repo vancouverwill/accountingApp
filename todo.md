@@ -1,5 +1,3 @@
-- test for adding tranasaction as POST API
-
 - GET, POST, PUT, DELETE accounts, accountHolder, currencies and taxrates
 
 - reuse post function instead of rewriting it (figure out how to reuse jsonToObject)
