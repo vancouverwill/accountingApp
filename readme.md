@@ -18,6 +18,14 @@ Create the backend for a double­entry accounting and show how to handle transac
 
 If you don't have mysql installed go ahead, on mac just do `brew install mysql` I have used the default username of root and password empty but you use whatever you like, just update models/dbModel.go with your settings.
 
+Note if you are using brew if you turn your mac on and off you need to run 
+
+`mysql.server restart`
+
+and then the db can be accessed via
+
+`mysql  -u root`
+
 Once mysql is setup locally run `schemaSetup.sql` to create the db and tables.
 
 Possibly depending on go setup you may need to run
