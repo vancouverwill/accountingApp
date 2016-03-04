@@ -1,0 +1,14 @@
+language: go
+sudo: false
+notificaitons:
+  email:
+    recipients: willmelbourne@gmail.com
+    on_success: change
+    on_failure: always
+before_script:
+before_install:
+  - mysql -u root  < v1schemaSetup.sql
+  - mysql -u root  < v2schemaSetup.sql
+services:
+  - mysql
+

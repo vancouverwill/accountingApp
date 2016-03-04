@@ -1,5 +1,7 @@
 -- run this file to get started
 
+DROP DATABASE IF EXISTS accountancyApp;
+
 create database accountancyApp;
 
 use accountancyApp;
