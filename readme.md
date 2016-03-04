@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/vancouverwill/golangAccountingApp.svg?branch=master)](https://travis-ci.org/vancouverwill/golangAccountingApp)
+
 ## Description
 
 Create the backend for a double­entry accounting and show how to handle transactions such as the income from a sale being divided between tax and revenue accounts.
