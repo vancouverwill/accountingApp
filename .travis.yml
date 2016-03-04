@@ -7,8 +7,7 @@ notificaitons:
     on_failure: always
 before_script:
 before_install:
-  - mysql -u root  < v1schemaSetup.sql
-  - mysql -u root  < v2schemaSetup.sql
+  - mysql -u root  < combinedSchema.sql
 services:
   - mysql
 
